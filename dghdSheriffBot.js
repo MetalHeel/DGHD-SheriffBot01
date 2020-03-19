@@ -83,7 +83,7 @@ function processCommand(author, message) {
 	// console.log("Command: " + command);
 	// console.log("Sent by " + author);
 	
-	switch (command) {
+	switch (command.toLowerCase()) {
 		case "arrest": {
 			// TODO: What's up with online vs offline?
 			if (messagePieces.length == 1) {
@@ -99,6 +99,10 @@ function processCommand(author, message) {
 			});
 			break;
 		}
+		case "currentsuspect": {
+			commands.processCurrentSuspect(dghdQuarantineGeneral);
+			break;
+		}
 		case "meow": {
 			commands.processMeow(dghdQuarantineGeneral);
 			break;
@@ -111,6 +115,7 @@ function processCommand(author, message) {
 }
 
 function processDirectMention(content) {
+	// TODO: Should it be exclusively howdy? Not just include?
 	if (content.toLowerCase().includes("howdy")) {
 		mentions.processHowdy(dghdQuarantineGeneral);
 		return;

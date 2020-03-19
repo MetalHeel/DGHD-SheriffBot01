@@ -4,6 +4,16 @@ var Sheriff = require("./theSheriff.js");
 
 module.exports = {
 	processArrest: function(channel, accuser, accusee) {
+		if (accusee.id === Sheriff.theSheriff.currentSuspect) {
+			channel.send("Listen, I'm already working on it. Quit buggin' me.");
+			return;
+		}
+		
+		if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect) {
+			channel.send("I'm already working on a got dang case. Wait in line.");
+			return;
+		}
+		
 		if (accusee.id === Sheriff.theSheriff.userId) {
 			channel.send("Now why would I go and arrest myself? I ain't done nothin' wrong.");
 			return;
@@ -23,6 +33,16 @@ module.exports = {
 		Sheriff.theSheriff.currentSuspect = accusee.id;
 		
 		channel.send("You want to put " + utility.encapsulateIdIntoMention(accusee) + " in jail? On what charges?");
+	},
+	
+	processCurrentSuspect: function(channel) {
+		if (!Sheriff.theSheriff.currentAccuser && !Sheriff.theSheriff.currentSuspect) {
+			channel.send("All's quiet on the prairie. No crimes here.");
+			return;
+		}
+		
+		channel.send(utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentAccuser) + " seems to think " +
+			utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " has committed a crime.");
 	},
 	
 	processMeow: function(channel) {
