@@ -97,7 +97,7 @@ function processCommand(command) {
 }
 
 function isMention(content, userId) {
-	return (content.startsWith("<@!" + client.user.id + ">") || content.startsWith("<@" + client.user.id + ">"));
+	return content.startsWith("<@!" + client.user.id + ">") || content.startsWith("<@" + client.user.id + ">");
 }
 
 client.login(botToken);
