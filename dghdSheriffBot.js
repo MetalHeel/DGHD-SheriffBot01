@@ -21,7 +21,9 @@ var Sheriff = require("./theSheriff.js");
 // The bot token must be passed in, we can't have it public anywhere.
 const botToken = process.argv.slice(2)[0];
 
-const dghdQuarantineGeneralID = "689656654329151613";
+//const dghdQuarantineGeneralID = "689656654329151613";
+// Use for Sheriff's office.
+const dghdQuarantineGeneralID = "690331814560268365";
 var dghdQuarantineGeneral = null;
 
 sql.connect(config, function (err) {
@@ -36,6 +38,11 @@ client.on('ready', () => {
 	Sheriff.theSheriff.userId = client.user.id;
 	
 	console.log("Connected as " + client.user.id);
+
+	// Use to output channels.
+	/*client.channels.cache.forEach(channel => {
+		console.log(channel.name + " " + channel.id);
+	});*/
 	
 	client.channels.fetch(dghdQuarantineGeneralID).then(channel => dghdQuarantineGeneral = channel);
 });
