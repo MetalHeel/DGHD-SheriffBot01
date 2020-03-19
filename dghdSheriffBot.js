@@ -14,8 +14,7 @@ var config = {
 };
 
 // The bot token must be passed in, we can't have it public anywhere.
-const args = process.argv.slice(2)
-const botToken = args[0]
+const botToken = process.argv.slice(2)[0]
 
 const dghdQuarantineGeneralID = "689656654329151613";
 var dghdQuarantineGeneral = null;
@@ -97,7 +96,7 @@ function processCommand(command) {
 }
 
 function isMention(content, userId) {
-	return content.startsWith("<@!" + client.user.id + ">") || content.startsWith("<@" + client.user.id + ">");
+	return content.startsWith("<@!" + userId + ">") || content.startsWith("<@" + userId + ">");
 }
 
 client.login(botToken);
