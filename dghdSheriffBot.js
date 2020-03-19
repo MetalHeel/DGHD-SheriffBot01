@@ -29,7 +29,7 @@ sql.connect(config, function (err) {
 });
 
 client.on('ready', () => {
-    console.log("Connected as " + client.user.id);
+	console.log("Connected as " + client.user.id);
 	
 	client.channels.fetch(dghdQuarantineGeneralID).then(channel => dghdQuarantineGeneral = channel);
 });
@@ -50,19 +50,19 @@ client.on('message', message => {
 	}
 	
 	if (message.author == client.user) {
-        return;
-    }
+		return;
+	}
 	
 	// Use for debugging.
 	// console.log("Content: " + message.content);
 	
-    if (isMention(message.content, client.user.id)) {
+	if (isMention(message.content, client.user.id)) {
 		if (message.content.toLowerCase().includes("howdy")) {
 			dghdQuarantineGeneral.send("Howdy, partner");
 		} else {
 			dghdQuarantineGeneral.send("Pardon me buckaroo, but I couldn't understand a got dang word you just said.");
 		}
-    }
+	}
 	
 	if (message.content === "!offenses") {
 		var request = new sql.Request();
@@ -77,9 +77,12 @@ client.on('message', message => {
 					output += "\n";
 				}
 			}
-            dghdQuarantineGeneral.send(output);
-        });
+			dghdQuarantineGeneral.send(output);
+		});
+	} else if (message.content === "!meow") {
+		dghdQuarantineGeneral.send("I ain't no got dang cat.");
 	}
+	
 });
 
 function processCommand(command) {
