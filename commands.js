@@ -1,5 +1,13 @@
+const utility = require('./utility.js');
+
 module.exports = {
-	processArrest: function() {
+	processArrest: function(channel, accuser, accusee) {
+		if (accusee.id === accuser.id) {
+			channel.send("You want to arrest yourself, partner? That's a bit asinine.");
+			return;
+		}
+		
+		channel.send("I see you want to put " + utility.encapsulateIdIntoMention(accusee) + " in jail. Not quite ready for that yet partner, but I will be soon.");
 	},
 	
 	processMeow: function(channel) {

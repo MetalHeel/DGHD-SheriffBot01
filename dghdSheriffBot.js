@@ -2,6 +2,7 @@ const sql = require('mssql');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const commands = require('./commands.js');
+const utility = require('./utility.js');
 
 // SQL configuration.
 var config = {
@@ -15,7 +16,8 @@ var config = {
 };
 
 // The bot token must be passed in, we can't have it public anywhere.
-const botToken = process.argv.slice(2)[0]
+const botToken = process.argv.slice(2)[0];
+var botUserId = null;
 
 const dghdQuarantineGeneralID = "689656654329151613";
 var dghdQuarantineGeneral = null;
@@ -29,6 +31,8 @@ sql.connect(config, function (err) {
 });
 
 client.on('ready', () => {
+	botUserId = client.user.id;
+	
 	console.log("Connected as " + client.user.id);
 	
 	client.channels.fetch(dghdQuarantineGeneralID).then(channel => dghdQuarantineGeneral = channel);
@@ -57,8 +61,8 @@ client.on('message', message => {
 	// console.log("Content: " + message.content);
 	
 	if (message.content.startsWith("!")) {
-		processCommand(message.content.substring(1));
-	} else if (isMention(message.content, client.user.id)) {
+		processCommand(message.author, message.content);
+	} else if (utility.isDirectMention(message.content, client.user.id)) {
 		if (message.content.toLowerCase().includes("howdy")) {
 			dghdQuarantineGeneral.send("Howdy, partner");
 		} else {
@@ -67,10 +71,46 @@ client.on('message', message => {
 	}
 });
 
-function processCommand(command) {
+function processCommand(author, message) {
+	var messagePieces = message.split(" ");
+	
+	if (messagePieces.length < 1) {
+		return;
+	}
+	
+	var command = messagePieces[0];
+	command = command.substring(1);
+	
+	// Use for debugging.
+	// console.log("Command: " + command);
+	// console.log("Sent by " + author);
+	
 	switch (command) {
 		case "arrest": {
-			commands.processArrest();
+			// TODO: What's up with online vs offline?
+			// TODO: Can't arrest the sheriff.
+			if (messagePieces.length == 1) {
+				dghdQuarantineGeneral.send("Arrest who, partner?");
+				break;
+			}
+			
+			if (!(messagePieces[1].startsWith("<@!") || messagePieces[1].startsWith("<@")) && !messagePieces[1].endsWith(">")) {
+				dghdQuarantineGeneral.send("That ain't a person, ya chuckle head.");
+				break;
+			}
+			
+			client.users.fetch(utility.extractIdFromMention(messagePieces[1])).then(accusee => {
+				if (accusee.id === botUserId) {
+					dghdQuarantineGeneral.send("Now why would I go and arrest myself? I ain't done nothin' wrong.");
+					return;
+				}
+				
+				if (!accusee) {
+					dghdQuarantineGeneral.send("That ain't a person, ya chuckle head.");
+					return;
+				}
+				commands.processArrest(dghdQuarantineGeneral, author, accusee);
+			});
 			break;
 		}
 		case "meow": {
@@ -82,10 +122,6 @@ function processCommand(command) {
 			break;
 		}
 	}
-}
-
-function isMention(content, userId) {
-	return content.startsWith("<@!" + userId + ">") || content.startsWith("<@" + userId + ">");
 }
 
 client.login(botToken);
