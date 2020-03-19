@@ -1,13 +1,28 @@
 const utility = require('./utility.js');
 
+var Sheriff = require("./theSheriff.js");
+
 module.exports = {
 	processArrest: function(channel, accuser, accusee) {
+		if (accusee.id === Sheriff.theSheriff.userId) {
+			channel.send("Now why would I go and arrest myself? I ain't done nothin' wrong.");
+			return;
+		}
+				
+		if (!accusee) {
+			channel.send("That ain't a person, ya chuckle head.");
+			return;
+		}
+		
 		if (accusee.id === accuser.id) {
 			channel.send("You want to arrest yourself, partner? That's a bit asinine.");
 			return;
 		}
 		
-		channel.send("I see you want to put " + utility.encapsulateIdIntoMention(accusee) + " in jail. Not quite ready for that yet partner, but I will be soon.");
+		Sheriff.theSheriff.currentAccuser = accuser.id;
+		Sheriff.theSheriff.currentSuspect = accusee.id;
+		
+		channel.send("You want to put " + utility.encapsulateIdIntoMention(accusee) + " in jail? On what charges?");
 	},
 	
 	processMeow: function(channel) {
