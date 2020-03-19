@@ -1,6 +1,7 @@
 const sql = require('mssql');
 const Discord = require('discord.js');
 const client = new Discord.Client();
+const commands = require('./commands.js');
 
 // SQL configuration.
 var config = {
@@ -39,7 +40,7 @@ client.on('guildMemberAdd', member => {
 		return;
 	}
 	
-	dghdQuarantineGeneral.send("Welcome to the server, " + member + "!");
+	dghdQuarantineGeneral.send("Welcome to the server, " + member.user.username + "!");
 });
 
 // When a message arrives.
@@ -55,41 +56,29 @@ client.on('message', message => {
 	// Use for debugging.
 	// console.log("Content: " + message.content);
 	
-	if (isMention(message.content, client.user.id)) {
+	if (message.content.startsWith("!")) {
+		processCommand(message.content.substring(1));
+	} else if (isMention(message.content, client.user.id)) {
 		if (message.content.toLowerCase().includes("howdy")) {
 			dghdQuarantineGeneral.send("Howdy, partner");
 		} else {
 			dghdQuarantineGeneral.send("Pardon me buckaroo, but I couldn't understand a got dang word you just said.");
 		}
 	}
-	
-	if (message.content === "!offenses") {
-		var request = new sql.Request();
-		request.query("SELECT name FROM offenses", function (err, result) {
-			// TODO: Check for errors.
-			
-			var length = Object.keys(result.recordset).length;
-			var output = "";
-			for (var i = 0; i < length; i++) {
-				output += result.recordset[i].name;
-				if (i < length - 1) {
-					output += "\n";
-				}
-			}
-			dghdQuarantineGeneral.send(output);
-		});
-	} else if (message.content === "!meow") {
-		dghdQuarantineGeneral.send("I ain't no got dang cat.");
-	}
-	
 });
 
 function processCommand(command) {
 	switch (command) {
-		case "offenses": {
+		case "arrest": {
+			commands.processArrest();
 			break;
 		}
-		case "arrest": {
+		case "meow": {
+			commands.processMeow(dghdQuarantineGeneral);
+			break;
+		}
+		case "offenses": {
+			commands.processOffenses(sql, dghdQuarantineGeneral);
 			break;
 		}
 	}
