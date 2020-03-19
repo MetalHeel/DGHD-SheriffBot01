@@ -42,7 +42,7 @@ client.on('guildMemberAdd', member => {
 	dghdQuarantineGeneral.send("Welcome to the server, " + member + "!");
 });
 
-// When when a message arrives.
+// When a message arrives.
 client.on('message', message => {
 	if (!dghdQuarantineGeneral) {
 		return;
