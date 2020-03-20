@@ -1,5 +1,6 @@
 module.exports.theSheriff = {
 	userId: "null",
 	currentAccuser: null,
-	currentSuspect: null
+	currentSuspect: null,
+	channel: null
 };

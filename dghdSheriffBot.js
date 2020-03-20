@@ -2,6 +2,7 @@
  * Major TODOS:
  *  - Error handling.
  *  - Guarantee the promises.
+ *  - Figure out how to use mssql with objects instead of just strings.
  */
 
 const sql = require('mssql');
@@ -29,9 +30,10 @@ var Sheriff = require("./theSheriff.js");
 // The bot token must be passed in, we can't have it public anywhere.
 const botToken = process.argv.slice(2)[0];
 
-//const dghdQuarantineGeneralID = "689656654329151613";
+// User for general channel.
+const dghdQuarantineChannelID = "689656654329151613";
 // Use for Sheriff's office.
-const dghdQuarantineGeneralID = "690331814560268365";
+//const dghdQuarantineChannelID = "690331814560268365";
 var dghdQuarantineGeneral = null;
 
 sql.connect(config, function (err) {
@@ -52,21 +54,21 @@ client.on('ready', () => {
 		console.log(channel.name + " " + channel.id);
 	});*/
 	
-	client.channels.fetch(dghdQuarantineGeneralID).then(channel => dghdQuarantineGeneral = channel);
+	client.channels.fetch(dghdQuarantineChannelID).then(channel => Sheriff.theSheriff.channel = channel);
 });
 
 // When someone new arrives.
 client.on('guildMemberAdd', member => {
-	if (!dghdQuarantineGeneral) {
+	if (!Sheriff.theSheriff.channel) {
 		return;
 	}
 	
-	dghdQuarantineGeneral.send("Welcome to the server, " + member.user.username + "!");
+	Sheriff.theSheriff.channel.send("Welcome to the server, " + member.user.username + "!");
 });
 
 // When a message arrives.
 client.on('message', message => {
-	if (!dghdQuarantineGeneral) {
+	if (!Sheriff.theSheriff.channel) {
 		return;
 	}
 	
@@ -81,6 +83,27 @@ client.on('message', message => {
 		processCommand(message.author, message.content);
 	} else if (utility.isDirectMention(message.content, client.user.id)) {
 		processDirectMention(message.content);
+	} else {
+		// Reprimand this person if they're in jail and we hit the reprimand chance.
+		var query = "SELECT jail.user_id, offenses.reprimand_chance FROM jail LEFT JOIN offenses ON jail.offense_name = offenses.name WHERE jail.user_id = " + message.author.id;
+		var request = new sql.Request();
+		request.query(query, function (err, result) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			if (result.recordset.length == 0) {
+				return;
+			}
+			if (result.recordset.length > 1) {
+				console.log("We should not have multiple instances of a person in jail!");
+				return;
+			}
+			var record = result.recordset[0];
+			if (Math.floor(Math.random() * Math.floor(100)) <= record.reprimand_chance) {
+				Sheriff.theSheriff.channel.send("Hey " + utility.encapsulateIdIntoMention(record.user_id) + ", pipe down in there!");
+			}
+		});
 	}
 });
 
@@ -102,29 +125,28 @@ function processCommand(author, message) {
 		case "arrest": {
 			// TODO: What's up with online vs offline?
 			if (messagePieces.length == 1) {
-				dghdQuarantineGeneral.send("Arrest who, partner?");
+				Sheriff.theSheriff.channel.send("Arrest who, partner?");
 				break;
 			}
 			if (!(messagePieces[1].startsWith("<@!") || messagePieces[1].startsWith("<@")) && !messagePieces[1].endsWith(">")) {
-				dghdQuarantineGeneral.send("That ain't a person, ya chuckle head.");
+				Sheriff.theSheriff.channel.send("That ain't a person, ya chuckle head.");
 				break;
 			}
-			// TODO: Do you want to use await here?
 			client.users.fetch(utility.extractIdFromMention(messagePieces[1])).then(accusee => {
-				commands.processArrest(dghdQuarantineGeneral, author, accusee);
+				commands.processArrest(author, accusee);
 			});
 			break;
 		}
 		case "currentsuspect": {
-			commands.processCurrentSuspect(dghdQuarantineGeneral);
+			commands.processCurrentSuspect();
 			break;
 		}
 		case "meow": {
-			commands.processMeow(dghdQuarantineGeneral);
+			commands.processMeow();
 			break;
 		}
 		case "offenses": {
-			commands.processOffenses(sql, dghdQuarantineGeneral);
+			commands.processOffenses();
 			break;
 		}
 	}
@@ -133,14 +155,18 @@ function processCommand(author, message) {
 function processDirectMention(content) {
 	// TODO: Should it be exclusively howdy? Not just include?
 	if (content.toLowerCase().includes("howdy")) {
-		mentions.processHowdy(dghdQuarantineGeneral);
+		mentions.processHowdy();
+		return;
+	}
+	if (content.toLowerCase().includes("thank you for your service")) {
+		mentions.processThankYouForYourService();
 		return;
 	}
 	if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect) {
-		mentions.processPossibleAccusation(sql, dghdQuarantineGeneral, content);
+		mentions.processPossibleAccusation(content);
 		return;
 	}
-	dghdQuarantineGeneral.send("Pardon me buckaroo, but I couldn't understand a got dang word you just said.");
+	Sheriff.theSheriff.channel.send("Pardon me buckaroo, but I couldn't understand a got dang word you just said.");
 }
 
 client.login(botToken);
