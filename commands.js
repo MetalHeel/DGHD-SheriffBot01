@@ -5,6 +5,7 @@ var Sheriff = require("./theSheriff.js");
 
 // TODO: Let's do a who's in jail
 module.exports = {
+	// TODO: A timeout for putting someone in jail.
 	processArrest: function(accuser, accusee) {
 		if (!accusee) {
 			Sheriff.theSheriff.channel.send("That ain't a person, ya chuckle head.");
@@ -16,10 +17,10 @@ module.exports = {
 			return;
 		}
 		
-		if (accusee.id === accuser.id) {
+		/*if (accusee.id === accuser.id) {
 			Sheriff.theSheriff.channel.send("You want to arrest yourself, partner? That's a bit asinine.");
 			return;
-		}
+		}*/
 		
 		if (accusee.id === Sheriff.theSheriff.currentSuspect) {
 			Sheriff.theSheriff.channel.send("Listen, I'm already working on it. Quit buggin' me.");

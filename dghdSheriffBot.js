@@ -85,25 +85,18 @@ client.on('message', message => {
 		processDirectMention(message.content);
 	} else {
 		// Reprimand this person if they're in jail and we hit the reprimand chance.
-		var query = "SELECT jail.user_id, offenses.reprimand_chance FROM jail LEFT JOIN offenses ON jail.offense_name = offenses.name WHERE jail.user_id = " + message.author.id;
-		var request = new sql.Request();
-		request.query(query, function (err, result) {
-			if (err) {
-				console.log(err);
-				return;
-			}
-			if (result.recordset.length == 0) {
-				return;
-			}
-			if (result.recordset.length > 1) {
-				console.log("We should not have multiple instances of a person in jail!");
-				return;
-			}
-			var record = result.recordset[0];
-			if (Math.floor(Math.random() * Math.floor(100)) <= record.reprimand_chance) {
-				Sheriff.theSheriff.channel.send("Hey " + utility.encapsulateIdIntoMention(record.user_id) + ", pipe down in there!");
-			}
-		});
+		if (message.author.id in Sheriff.theSheriff.jail) {
+			var request = new sql.Request();
+			request.query("SELECT reprimand_chance FROM offenses WHERE name = '" + Sheriff.theSheriff.jail[message.author.id].offense + "'", function (err, result) {
+				if (err) {
+					console.log(err);
+					return;
+				}
+				if (Math.floor(Math.random() * Math.floor(100)) <= result.recordset[0].reprimand_chance) {
+					Sheriff.theSheriff.channel.send("Hey " + utility.encapsulateIdIntoMention(message.author.id) + ", pipe down in there!");
+				}				
+			});
+		}
 	}
 });
 
@@ -162,6 +155,7 @@ function processDirectMention(content) {
 		mentions.processThankYouForYourService();
 		return;
 	}
+	// TODO: Only the accuser gets to say who goes to jail.
 	if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect) {
 		mentions.processPossibleAccusation(content);
 		return;
