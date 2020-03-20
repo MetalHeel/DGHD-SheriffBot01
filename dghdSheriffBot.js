@@ -1,9 +1,17 @@
+/*
+ * Major TODOS:
+ *  - Error handling.
+ *  - Guarantee the promises.
+ */
+
 const sql = require('mssql');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const commands = require('./commands.js');
 const mentions = require('./directMentions.js');
 const utility = require('./utility.js');
+
+require("./timedEvents.js");
 
 // SQL configuration.
 var config = {
@@ -101,6 +109,7 @@ function processCommand(author, message) {
 				dghdQuarantineGeneral.send("That ain't a person, ya chuckle head.");
 				break;
 			}
+			// TODO: Do you want to use await here?
 			client.users.fetch(utility.extractIdFromMention(messagePieces[1])).then(accusee => {
 				commands.processArrest(dghdQuarantineGeneral, author, accusee);
 			});

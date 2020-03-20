@@ -51,8 +51,14 @@ module.exports = {
 	
 	processOffenses: function(sql, channel) {
 		var request = new sql.Request();
+		// TODO: Do you want to use await here?
 		request.query("SELECT name FROM offenses", function (err, result) {
-			// TODO: Check for errors.
+			if (err) {
+				console.log(err);
+				Sheriff.theSheriff.currentAccuser = null;
+				Sheriff.theSheriff.currentSuspect = null;
+				return;
+			}
 			
 			var length = Object.keys(result.recordset).length;
 			var output = "";
