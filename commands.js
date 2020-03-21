@@ -5,7 +5,6 @@ var Sheriff = require("./theSheriff.js");
 
 // TODO: Let's do a who's in jail
 module.exports = {
-	// TODO: A timeout for putting someone in jail.
 	processArrest: function(accuser, accusee) {
 		if (!accusee) {
 			Sheriff.theSheriff.channel.send("That ain't a person, ya chuckle head.");
@@ -34,6 +33,7 @@ module.exports = {
 		
 		Sheriff.theSheriff.currentAccuser = accuser.id;
 		Sheriff.theSheriff.currentSuspect = accusee.id;
+		Sheriff.theSheriff.lastAccusationTime = new Date().getTime();
 		
 		Sheriff.theSheriff.channel.send("You want to put " + utility.encapsulateIdIntoMention(accusee) + " in jail? On what charges?");
 	},
@@ -59,6 +59,7 @@ module.exports = {
 				console.log(err);
 				Sheriff.theSheriff.currentAccuser = null;
 				Sheriff.theSheriff.currentSuspect = null;
+				Sheriff.theSheriff.lastAccusationTime = null;
 				return;
 			}
 			
@@ -74,5 +75,14 @@ module.exports = {
 			
 			Sheriff.theSheriff.channel.send(output);
 		});
+	},
+	
+	processWhosInJail: function() {
+		var inmateList = "";
+		Object.keys(Sheriff.theSheriff.jail).forEach(function(inmate) {
+			inmateList += utility.encapsulateIdIntoMention(inmate) + " is in jail for " + Sheriff.theSheriff.jail[inmate].offense + ".\n";
+		});
+		inmateList += "And that's about it.";
+		Sheriff.theSheriff.channel.send(inmateList);
 	}
 }

@@ -16,6 +16,7 @@ module.exports = {
 				console.log(err);
 				Sheriff.theSheriff.currentAccuser = null;
 				Sheriff.theSheriff.currentSuspect = null;
+				Sheriff.theSheriff.lastAccusationTime = null;
 				return;
 			}
 			
@@ -25,10 +26,11 @@ module.exports = {
 						if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence > result.recordset[i].sentence) {
 							// TODO: Stack sentencing?
 							Sheriff.theSheriff.channel.send(utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already carrying out a longer sentence. We'll call that time served.");
+						} else if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence == result.recordset[i].sentence) {
+							Sheriff.theSheriff.channel.send("Weeeeell, " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already serving an equal sentence. We'll call that time served.");
 						} else {
-							// TODO: Maybe call out sentences here as well.
 							Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence = result.recordset[i].sentence;
-							Sheriff.theSheriff.channel.send("Welp " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", looks like you just got a longer sentence.");
+							Sheriff.theSheriff.channel.send("This carries a sentence of " + result.recordset[i].sentence + " minutes. Welp " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", looks like you just booked a longer stay.");
 						}
 					} else {
 						if (result.recordset[i].sentence == 1) {
@@ -44,6 +46,7 @@ module.exports = {
 					}
 					Sheriff.theSheriff.currentAccuser = null;
 					Sheriff.theSheriff.currentSuspect = null;
+					Sheriff.theSheriff.lastAccusationTime = null;
 					return;
 				}
 			}
@@ -52,6 +55,7 @@ module.exports = {
 			
 			Sheriff.theSheriff.currentAccuser = null;
 			Sheriff.theSheriff.currentSuspect = null;
+			Sheriff.theSheriff.lastAccusationTime = null;
 		});
 	},
 	

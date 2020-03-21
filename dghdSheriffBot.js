@@ -31,9 +31,9 @@ var Sheriff = require("./theSheriff.js");
 const botToken = process.argv.slice(2)[0];
 
 // User for general channel.
-const dghdQuarantineChannelID = "689656654329151613";
+//const dghdQuarantineChannelID = "689656654329151613";
 // Use for Sheriff's office.
-//const dghdQuarantineChannelID = "690331814560268365";
+const dghdQuarantineChannelID = "690331814560268365";
 var dghdQuarantineGeneral = null;
 
 sql.connect(config, function (err) {
@@ -82,7 +82,7 @@ client.on('message', message => {
 	if (message.content.startsWith("!")) {
 		processCommand(message.author, message.content);
 	} else if (utility.isDirectMention(message.content, client.user.id)) {
-		processDirectMention(message.content);
+		processDirectMention(message.content, message.author.id);
 	} else {
 		// Reprimand this person if they're in jail and we hit the reprimand chance.
 		if (message.author.id in Sheriff.theSheriff.jail) {
@@ -142,10 +142,14 @@ function processCommand(author, message) {
 			commands.processOffenses();
 			break;
 		}
+		case "whosinjail": {
+			commands.processWhosInJail();
+			break;
+		}
 	}
 }
 
-function processDirectMention(content) {
+function processDirectMention(content, authorId) {
 	// TODO: Should it be exclusively howdy? Not just include?
 	if (content.toLowerCase().includes("howdy")) {
 		mentions.processHowdy();
@@ -155,8 +159,11 @@ function processDirectMention(content) {
 		mentions.processThankYouForYourService();
 		return;
 	}
-	// TODO: Only the accuser gets to say who goes to jail.
 	if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect) {
+		if (authorId !== Sheriff.theSheriff.currentAccuser) {
+			Sheriff.theSheriff.channel.send("Sorry partner, only the original accuser can press charges.");
+			return;
+		}
 		mentions.processPossibleAccusation(content);
 		return;
 	}
