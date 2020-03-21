@@ -83,7 +83,11 @@ module.exports = {
 			Sheriff.theSheriff.channel.send("I'm afraid that's not a good number, partner.");
 			return;
 		}
-		if (sides <= 0) {
+		if (sides == 0) {
+			Sheriff.theSheriff.channel.send("A zero dice? Heck am I supposed to do with that? You got tumbleweed for brains?");
+			return;
+		}
+		if (sides < 0) {
 			Sheriff.theSheriff.channel.send("Ain't no such thing as a negative dice, ya idjit.");
 			return;
 		}
