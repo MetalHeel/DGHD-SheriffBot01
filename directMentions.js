@@ -4,6 +4,10 @@ const utility = require('./utility.js');
 var Sheriff = require("./theSheriff.js");
 
 module.exports = {
+	processCanIHaveABeerPlease: function() {
+		Sheriff.theSheriff.channel.send("Sure buckaroo. Mind if I have one with you? <:beer2:690217077763473469> <:beer2:690217077763473469>");
+	},
+	
 	processHowdy: function() {
 		Sheriff.theSheriff.channel.send("Howdy, partner");
 	},

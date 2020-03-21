@@ -31,9 +31,9 @@ var Sheriff = require("./theSheriff.js");
 const botToken = process.argv.slice(2)[0];
 
 // User for general channel.
-//const dghdQuarantineChannelID = "689656654329151613";
+const dghdQuarantineChannelID = "689656654329151613";
 // Use for Sheriff's office.
-const dghdQuarantineChannelID = "690331814560268365";
+//const dghdQuarantineChannelID = "690331814560268365";
 var dghdQuarantineGeneral = null;
 
 sql.connect(config, function (err) {
@@ -69,6 +69,10 @@ client.on('guildMemberAdd', member => {
 // When a message arrives.
 client.on('message', message => {
 	if (!Sheriff.theSheriff.channel) {
+		return;
+	}
+	
+	if (message.channel != Sheriff.theSheriff.channel) {
 		return;
 	}
 	
@@ -157,6 +161,10 @@ function processDirectMention(content, authorId) {
 	}
 	if (content.toLowerCase().includes("thank you for your service")) {
 		mentions.processThankYouForYourService();
+		return;
+	}
+	if (content.toLowerCase().includes("can i have a beer please")) {
+		mentions.processCanIHaveABeerPlease();
 		return;
 	}
 	if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect) {
