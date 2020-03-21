@@ -77,6 +77,20 @@ module.exports = {
 		});
 	},
 	
+	processRollDX(numberOfSidesString) {
+		var sides = Number(numberOfSidesString);
+		if (isNaN(sides) || !Number.isInteger(sides)) {
+			Sheriff.theSheriff.channel.send("I'm afraid that's not a good number, partner.");
+			return;
+		}
+		if (sides <= 0) {
+			Sheriff.theSheriff.channel.send("Ain't no such thing as a negative dice, ya idjit.");
+			return;
+		}
+		var roll = Math.floor(Math.random() * Math.floor(sides)) + 1;
+		Sheriff.theSheriff.channel.send("Looks like you rolled a " + roll + " partner.");
+	},
+	
 	processWhosInJail: function() {
 		var inmateList = "";
 		Object.keys(Sheriff.theSheriff.jail).forEach(function(inmate) {

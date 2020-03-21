@@ -3,6 +3,7 @@
  *  - Error handling.
  *  - Guarantee the promises.
  *  - Figure out how to use mssql with objects instead of just strings.
+ *  - Make this data driven (responses in the database, etc.).
  */
 
 const sql = require('mssql');
@@ -111,12 +112,24 @@ function processCommand(author, message) {
 		return;
 	}
 	
-	var command = messagePieces[0];
-	command = command.substring(1);
+	var command = null;
+	var possibleCommand = messagePieces[0];
+	possibleCommand = possibleCommand.substring(1);
 	
 	// Use for debugging.
-	// console.log("Command: " + command);
+	// console.log("Command: " + possibleCommand);
 	// console.log("Sent by " + author);
+	
+	// Special case for dynamic dice rolling.
+	if (possibleCommand.startsWith("roll")) {
+		command = possibleCommand.substring(0, 5);
+	} else {
+		command = possibleCommand;
+	}
+	
+	if (!command) {
+		return;
+	}
 	
 	switch (command.toLowerCase()) {
 		case "arrest": {
@@ -144,6 +157,10 @@ function processCommand(author, message) {
 		}
 		case "offenses": {
 			commands.processOffenses();
+			break;
+		}
+		case "rolld": {
+			commands.processRollDX(possibleCommand.substring(5));
 			break;
 		}
 		case "whosinjail": {
