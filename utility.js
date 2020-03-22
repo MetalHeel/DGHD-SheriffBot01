@@ -1,6 +1,10 @@
 module.exports = {
-	encapsulateIdIntoMention: function(userId) {
-		return "<@!" + userId + ">";
+	encapsulateIdIntoMention: function(userId, asMobile = false) {
+		if (asMobile) {
+			return "<@" + userId + ">";
+		} else {
+			return "<@!" + userId + ">";
+		}
 	},
 	
 	extractIdFromMention: function(mention) {

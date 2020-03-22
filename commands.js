@@ -1,4 +1,4 @@
-const sql = require('mssql');
+﻿const sql = require('mssql');
 const utility = require('./utility.js');
 
 var Sheriff = require("./theSheriff.js");
@@ -91,8 +91,20 @@ module.exports = {
 			Sheriff.theSheriff.channel.send("Ain't no such thing as a negative dice, ya idjit.");
 			return;
 		}
+		if (sides == 1) {
+			Sheriff.theSheriff.channel.send("Alright partner, you tell me: How in tarnation does something have one side? I s'pose a sphere has \"one side\", but you're only ever going to get one with it anyway, so what's the point?");
+			return;
+		}
 		var roll = Math.floor(Math.random() * Math.floor(sides)) + 1;
-		Sheriff.theSheriff.channel.send("Looks like you rolled a " + roll + " partner.");
+		if (sides == 2) {
+			if (roll == 1) {
+				Sheriff.theSheriff.channel.send("Looks like you got heads partner.");
+			} else {
+				Sheriff.theSheriff.channel.send("Looks like you got tails partner.");
+			}
+		} else {
+			Sheriff.theSheriff.channel.send("Looks like you rolled a " + roll + " partner.");
+		}
 	},
 	
 	processWhosInJail: function() {
