@@ -16,10 +16,10 @@ module.exports = {
 			return;
 		}
 		
-		/*if (accusee.id === accuser.id) {
+		if (accusee.id === accuser.id) {
 			Sheriff.theSheriff.channel.send("You want to arrest yourself, partner? That's a bit asinine.");
 			return;
-		}*/
+		}
 		
 		if (accusee.id === Sheriff.theSheriff.currentSuspect) {
 			Sheriff.theSheriff.channel.send("Listen, I'm already working on it. Quit buggin' me.");
@@ -54,7 +54,7 @@ module.exports = {
 	
 	processOffenses: function() {
 		var request = new sql.Request();
-		request.query("SELECT name FROM offenses", function (err, result) {
+		request.query("SELECT name FROM offenses ORDER BY name ASC", function (err, result) {
 			if (err) {
 				console.log(err);
 				Sheriff.theSheriff.currentAccuser = null;
