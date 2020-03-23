@@ -3,8 +3,15 @@ const utility = require('./utility.js');
 
 var Sheriff = require("./theSheriff.js");
 
-// TODO: Let's do a who's in jail
 module.exports = {
+	ARREST: 'arrest',
+	COMMANDS: 'commands',
+	CURRENT_SUSPECT: 'currentsuspect',
+	MEOW: 'meow',
+	OFFENSES: 'offenses',
+	ROLL_D: 'rolld',
+	WHOS_IN_JAIL: 'whosinjail',
+	
 	processArrest: function(accuser, accusee) {
 		if (!accusee) {
 			Sheriff.theSheriff.channel.send("That ain't a person, ya chuckle head.");
@@ -36,6 +43,10 @@ module.exports = {
 		Sheriff.theSheriff.lastAccusationTime = new Date().getTime();
 		
 		Sheriff.theSheriff.channel.send("You want to put " + utility.encapsulateIdIntoMention(accusee) + " in jail? On what charges?");
+	},
+	
+	processCommands: function() {
+		Sheriff.theSheriff.channel.send("Just go on and add '!' to the front of these:\n" + this.ARREST + "\n" + this.CURRENT_SUSPECT + "\n" + this.MEOW + "\n" + this.OFFENSES + "\n" + this.ROLL_D + "\n" + this.WHOS_IN_JAIL);
 	},
 	
 	processCurrentSuspect: function() {
@@ -109,6 +120,10 @@ module.exports = {
 	
 	processWhosInJail: function() {
 		var inmateList = "";
+		if (Object.keys(Sheriff.theSheriff.jail).length == 0) {
+			Sheriff.theSheriff.channel.send("Jail's empty, partner.");
+			return;
+		}
 		Object.keys(Sheriff.theSheriff.jail).forEach(function(inmate) {
 			inmateList += utility.encapsulateIdIntoMention(inmate) + " is in jail for " + Sheriff.theSheriff.jail[inmate].offense + ".\n";
 		});

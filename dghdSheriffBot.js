@@ -32,9 +32,9 @@ var Sheriff = require("./theSheriff.js");
 const botToken = process.argv.slice(2)[0];
 
 // User for general channel.
-const dghdQuarantineChannelID = "689656654329151613";
+//const dghdQuarantineChannelID = "689656654329151613";
 // Use for Sheriff's office.
-//const dghdQuarantineChannelID = "690331814560268365";
+const dghdQuarantineChannelID = "690331814560268365";
 var dghdQuarantineGeneral = null;
 
 sql.connect(config, function (err) {
@@ -132,7 +132,7 @@ function processCommand(author, message) {
 	}
 	
 	switch (command.toLowerCase()) {
-		case "arrest": {
+		case commands.ARREST: {
 			// TODO: What's up with online vs offline?
 			if (messagePieces.length == 1) {
 				Sheriff.theSheriff.channel.send("Arrest who, partner?");
@@ -147,23 +147,27 @@ function processCommand(author, message) {
 			});
 			break;
 		}
-		case "currentsuspect": {
+		case commands.COMMANDS: {
+			commands.processCommands();
+			break;
+		}
+		case commands.CURRENT_SUSPECT: {
 			commands.processCurrentSuspect();
 			break;
 		}
-		case "meow": {
+		case commands.MEOW: {
 			commands.processMeow();
 			break;
 		}
-		case "offenses": {
+		case commands.OFFENSES: {
 			commands.processOffenses();
 			break;
 		}
-		case "rolld": {
+		case commands.ROLL_D: {
 			commands.processRollDX(possibleCommand.substring(5));
 			break;
 		}
-		case "whosinjail": {
+		case commands.WHOS_IN_JAIL: {
 			commands.processWhosInJail();
 			break;
 		}

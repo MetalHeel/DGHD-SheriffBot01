@@ -28,7 +28,6 @@ module.exports = {
 				if (possibleCrime.toLowerCase().includes(result.recordset[i].name.toLowerCase())) {
 					if (Sheriff.theSheriff.currentSuspect in Sheriff.theSheriff.jail) {
 						if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence > result.recordset[i].sentence) {
-							// TODO: Stack sentencing?
 							Sheriff.theSheriff.channel.send(utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already carrying out a longer sentence. We'll call that time served.");
 						} else if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence == result.recordset[i].sentence) {
 							Sheriff.theSheriff.channel.send("Weeeeell, " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already serving an equal sentence. We'll call that time served.");
