@@ -6,10 +6,14 @@ var Sheriff = require("./theSheriff.js");
 
 // Used to check for timed events. Runs every minute.
 function processEvents() {
-	// Use for debugging.
-	// console.log(Sheriff.theSheriff.jail);
+	if (!Sheriff.theSheriff.userId) {
+		return;
+	}
 	
 	var now = new Date();
+	
+	// Use for debugging.
+	// console.log(Sheriff.theSheriff.jail);
 	
 	// Check last accusation.
 	if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect && Sheriff.theSheriff.lastAccusationTime) {
@@ -43,8 +47,9 @@ function processEvents() {
 	// Check the last check around the beat.
 	if (now.getTime() - Sheriff.theSheriff.lastCheckAroundTheBeat >= Sheriff.theSheriff.timeUntilNextBeatCheck) {
 		Sheriff.theSheriff.lastCheckAroundTheBeat = now.getTime();
-		Sheriff.theSheriff.timeUntilNextBeatCheck = Math.floor(Math.random() * Math.floor(1800000)) + 1200000;
-		if (now.getHours() >= 8 && now.getHours <= 23) {
+		Sheriff.theSheriff.timeUntilNextBeatCheck = utility.getRandomNumberBetweenXAndY(Sheriff.theSheriff.timeUntilNextBeatCheckLowerLimit, Sheriff.theSheriff.timeUntilNextBeatCheckHigherLimit);
+		
+		if (now.getHours() >= 8 && now.getTime() - Sheriff.theSheriff.lastChatTime < utility.THIRTY_MINUTES_IN_MILLISECONDS) {
 			var request = new sql.Request();
 			request.query("SELECT variation FROM message_variation WHERE message_type = '" + messageVariationTypes.ON_THE_BEAT + "'", function (err, result) {
 				if (err) {
@@ -52,13 +57,12 @@ function processEvents() {
 					return;
 				}
 				
-				var choice = Math.floor(Math.random() * Math.floor(Object.keys(result.recordset).length - 1));
+				var choice = utility.getRandomNumberBetweenXAndY(0, Object.keys(result.recordset).length);
 				
 				Sheriff.theSheriff.channel.send(result.recordset[choice].variation);
 			});
 		}
 	}
-	
 }
 
-setInterval(processEvents, 10000);
+setInterval(processEvents, 1000);

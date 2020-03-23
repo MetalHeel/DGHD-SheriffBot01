@@ -110,7 +110,7 @@ module.exports = {
 			Sheriff.theSheriff.channel.send("Alright partner, you tell me: How in tarnation does something have one side? I s'pose a sphere has \"one side\", but you're only ever going to get one with it anyway, so what's the point?");
 			return;
 		}
-		var roll = Math.floor(Math.random() * Math.floor(sides)) + 1;
+		var roll = utility.getRandomNumberBetweenXAndY(1, sides);
 		if (sides == 2) {
 			if (roll == 1) {
 				Sheriff.theSheriff.channel.send("Looks like you got heads partner.");

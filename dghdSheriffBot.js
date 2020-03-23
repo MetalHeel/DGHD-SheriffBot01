@@ -48,7 +48,7 @@ sql.connect(config, function (err) {
 client.on('ready', () => {
 	Sheriff.theSheriff.userId = client.user.id;
 	Sheriff.theSheriff.lastCheckAroundTheBeat = new Date().getTime();
-	Sheriff.theSheriff.timeUntilNextBeatCheck = Math.floor(Math.random() * Math.floor(1800000)) + 1200000;
+	Sheriff.theSheriff.timeUntilNextBeatCheck = utility.getRandomNumberBetweenXAndY(Sheriff.theSheriff.timeUntilNextBeatCheckLowerLimit, Sheriff.theSheriff.timeUntilNextBeatCheckHigherLimit);
 	
 	// Use to output channels.
 	/*client.channels.cache.forEach(channel => {
@@ -86,6 +86,8 @@ client.on('message', message => {
 	// Use for debugging.
 	// console.log("Content: " + message.content);
 	
+	Sheriff.theSheriff.lastChatTime = new Date().getTime();
+	
 	if (message.content.startsWith("!")) {
 		processCommand(message.author, message.content);
 	} else if (utility.isDirectMention(message.content, client.user.id)) {
@@ -99,7 +101,7 @@ client.on('message', message => {
 					console.log(err);
 					return;
 				}
-				if (Math.floor(Math.random() * Math.floor(100)) <= result.recordset[0].reprimand_chance) {
+				if (utility.getRandomNumberBetweenXAndY(1, 100) <= result.recordset[0].reprimand_chance) {
 					Sheriff.theSheriff.channel.send("Hey " + utility.encapsulateIdIntoMention(message.author.id) + ", pipe down in there!");
 				}				
 			});
