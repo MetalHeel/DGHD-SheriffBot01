@@ -32,9 +32,9 @@ var Sheriff = require("./theSheriff.js");
 const botToken = process.argv.slice(2)[0];
 
 // User for general channel.
-//const dghdQuarantineChannelID = "689656654329151613";
+const dghdQuarantineChannelID = "689656654329151613";
 // Use for Sheriff's office.
-const dghdQuarantineChannelID = "690331814560268365";
+//const dghdQuarantineChannelID = "690331814560268365";
 var dghdQuarantineGeneral = null;
 
 sql.connect(config, function (err) {
@@ -47,15 +47,17 @@ sql.connect(config, function (err) {
 
 client.on('ready', () => {
 	Sheriff.theSheriff.userId = client.user.id;
+	Sheriff.theSheriff.lastCheckAroundTheBeat = new Date().getTime();
+	Sheriff.theSheriff.timeUntilNextBeatCheck = Math.floor(Math.random() * Math.floor(900000)) + 120000;
 	
-	console.log("Connected as " + client.user.id);
-
 	// Use to output channels.
 	/*client.channels.cache.forEach(channel => {
 		console.log(channel.name + " " + channel.id);
 	});*/
 	
 	client.channels.fetch(dghdQuarantineChannelID).then(channel => Sheriff.theSheriff.channel = channel);
+	
+	console.log("Connected as " + client.user.id);
 });
 
 // When someone new arrives.
@@ -92,7 +94,7 @@ client.on('message', message => {
 		// Reprimand this person if they're in jail and we hit the reprimand chance.
 		if (message.author.id in Sheriff.theSheriff.jail) {
 			var request = new sql.Request();
-			request.query("SELECT reprimand_chance FROM offenses WHERE name = '" + Sheriff.theSheriff.jail[message.author.id].offense + "'", function (err, result) {
+			request.query("SELECT reprimand_chance FROM offense WHERE name = '" + Sheriff.theSheriff.jail[message.author.id].offense + "'", function (err, result) {
 				if (err) {
 					console.log(err);
 					return;

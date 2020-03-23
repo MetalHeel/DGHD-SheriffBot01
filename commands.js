@@ -65,7 +65,7 @@ module.exports = {
 	
 	processOffenses: function() {
 		var request = new sql.Request();
-		request.query("SELECT name FROM offenses ORDER BY name ASC", function (err, result) {
+		request.query("SELECT name FROM offense ORDER BY name ASC", function (err, result) {
 			if (err) {
 				console.log(err);
 				Sheriff.theSheriff.currentAccuser = null;

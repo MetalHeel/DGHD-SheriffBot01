@@ -15,7 +15,7 @@ module.exports = {
 	processPossibleAccusation(possibleCrime) {
 		var request = new sql.Request();
 		var offense = null;
-		request.query("SELECT name, sentence FROM offenses", function (err, result) {
+		request.query("SELECT name, sentence FROM offense", function (err, result) {
 			if (err) {
 				console.log(err);
 				Sheriff.theSheriff.currentAccuser = null;

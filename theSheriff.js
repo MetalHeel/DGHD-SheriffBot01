@@ -4,5 +4,7 @@ module.exports.theSheriff = {
 	currentAccuser: null,
 	currentSuspect: null,
 	lastAccusationTime: null,
+	lastCheckAroundTheBeat: null,
+	timeUntilNextBeatCheck: null,
 	jail: {}
 };

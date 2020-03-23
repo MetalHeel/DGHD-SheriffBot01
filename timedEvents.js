@@ -1,3 +1,4 @@
+const messageVariationTypes = require('./messageVariationTypes.js');
 const sql = require('mssql');
 const utility = require('./utility.js');
 
@@ -8,9 +9,11 @@ function processEvents() {
 	// Use for debugging.
 	// console.log(Sheriff.theSheriff.jail);
 	
+	var now = new Date().getTime();
+	
 	// Check last accusation.
 	if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect && Sheriff.theSheriff.lastAccusationTime) {
-		var changeInTime = new Date().getTime() - Sheriff.theSheriff.lastAccusationTime;
+		var changeInTime = now - Sheriff.theSheriff.lastAccusationTime;
 		if (changeInTime >= 60000) {
 			Sheriff.theSheriff.channel.send("Alright " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentAccuser) + ", I ain't gonna wait around here all day. " +
 				utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", get on out of here and stay out of trouble.");
@@ -26,7 +29,6 @@ function processEvents() {
 	var finishedSentences = [];
 	Object.keys(Sheriff.theSheriff.jail).forEach(function(inmate) {
 		var incarcerationTime = Sheriff.theSheriff.jail[inmate].incarcerationTime;
-		var now = new Date().getTime();
 		if (now - incarcerationTime >= Sheriff.theSheriff.jail[inmate].sentence * 60000) {
 			finishedSentences.push(inmate);
 			Sheriff.theSheriff.channel.send("Alright " + utility.encapsulateIdIntoMention(inmate) + ", you've served out your sentence. You're free to go.");
@@ -37,6 +39,23 @@ function processEvents() {
 			}
 		}
 	});
+	
+	// Check the last check around the beat.
+	if (now - Sheriff.theSheriff.lastCheckAroundTheBeat >= Sheriff.theSheriff.timeUntilNextBeatCheck) {
+		Sheriff.theSheriff.lastCheckAroundTheBeat = now;
+		Sheriff.theSheriff.timeUntilNextBeatCheck = Math.floor(Math.random() * Math.floor(900000)) + 120000;
+		var request = new sql.Request();
+		request.query("SELECT variation FROM message_variation WHERE message_type = '" + messageVariationTypes.ON_THE_BEAT + "'", function (err, result) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			
+			var choice = Math.floor(Math.random() * Math.floor(Object.keys(result.recordset).length - 1));
+			
+			Sheriff.theSheriff.channel.send(result.recordset[choice].variation);
+		});
+	}
 }
 
 setInterval(processEvents, 10000);
