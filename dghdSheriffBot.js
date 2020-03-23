@@ -181,7 +181,7 @@ function processCommand(author, message) {
 function processDirectMention(content, authorId) {
 	// TODO: Have him wait briefly on a followup
 	if (content === utility.encapsulateIdIntoMention(client.user.id) || content === utility.encapsulateIdIntoMention(client.user.id, true)) {
-		Sheriff.theSheriff.channel.send("Yes?");
+		Sheriff.theSheriff.channel.send("Yessum?");
 		return;
 	}
 	// TODO: Should it be exclusively howdy? Not just include?

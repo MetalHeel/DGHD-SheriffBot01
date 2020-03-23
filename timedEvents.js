@@ -57,7 +57,7 @@ function processEvents() {
 					return;
 				}
 				
-				var choice = utility.getRandomNumberBetweenXAndY(0, Object.keys(result.recordset).length);
+				var choice = utility.getRandomNumberBetweenXAndY(0, Object.keys(result.recordset).length - 1);
 				
 				Sheriff.theSheriff.channel.send(result.recordset[choice].variation);
 			});
