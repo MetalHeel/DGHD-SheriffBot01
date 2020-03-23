@@ -48,7 +48,7 @@ sql.connect(config, function (err) {
 client.on('ready', () => {
 	Sheriff.theSheriff.userId = client.user.id;
 	Sheriff.theSheriff.lastCheckAroundTheBeat = new Date().getTime();
-	Sheriff.theSheriff.timeUntilNextBeatCheck = Math.floor(Math.random() * Math.floor(900000)) + 120000;
+	Sheriff.theSheriff.timeUntilNextBeatCheck = Math.floor(Math.random() * Math.floor(1800000)) + 1200000;
 	
 	// Use to output channels.
 	/*client.channels.cache.forEach(channel => {
