@@ -65,7 +65,7 @@ module.exports = {
 	
 	processOffenses: function() {
 		var request = new sql.Request();
-		request.query("SELECT name FROM offense ORDER BY name ASC", function (err, result) {
+		request.query("SELECT name, sentence FROM offense ORDER BY name ASC", function (err, result) {
 			if (err) {
 				console.log(err);
 				Sheriff.theSheriff.currentAccuser = null;
@@ -78,7 +78,11 @@ module.exports = {
 			var output = "";
 			
 			for (var i = 0; i < length; i++) {
-				output += result.recordset[i].name;
+				if (result.recordset[i].sentence == 1) {
+					output += result.recordset[i].name + " (" + result.recordset[i].sentence + " minute)";
+				} else {
+					output += result.recordset[i].name + " (" + result.recordset[i].sentence + " minutes)";
+				}
 				if (i < length - 1) {
 					output += "\n";
 				}
