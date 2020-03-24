@@ -24,7 +24,7 @@ function processEvents() {
 			Sheriff.theSheriff.currentAccuser = null;
 			Sheriff.theSheriff.currentSuspect = null;
 			Sheriff.theSheriff.lastAccusationTime = null;
-		} else if (changeInTime >= 30000 && changeInTime < 40000) {
+		} else if (changeInTime >= 30000 && changeInTime < 31000) {
 			Sheriff.theSheriff.channel.send("Listen " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentAccuser) + ", you gonna charge this person or not?");
 		}
 	}
