@@ -49,7 +49,7 @@ function processEvents() {
 		Sheriff.theSheriff.lastCheckAroundTheBeat = now.getTime();
 		Sheriff.theSheriff.timeUntilNextBeatCheck = utility.getRandomNumberBetweenXAndY(Sheriff.theSheriff.timeUntilNextBeatCheckLowerLimit, Sheriff.theSheriff.timeUntilNextBeatCheckHigherLimit);
 		
-		if (now.getHours() >= 8 && now.getTime() - Sheriff.theSheriff.lastChatTime < utility.THIRTY_MINUTES_IN_MILLISECONDS) {
+		if (now.getHours() >= 8 && now.getTime() - Sheriff.theSheriff.lastChatTime < utility.ONE_HOUR_IN_MILLISECONDS) {
 			var request = new sql.Request();
 			request.query("SELECT variation FROM message_variation WHERE message_type = '" + messageVariationTypes.ON_THE_BEAT + "'", function (err, result) {
 				if (err) {

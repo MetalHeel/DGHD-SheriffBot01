@@ -7,8 +7,8 @@ module.exports.theSheriff = {
 	currentSuspect: null,
 	lastAccusationTime: null,
 	lastCheckAroundTheBeat: null,
-	timeUntilNextBeatCheckLowerLimit: utility.FOURTY_MINUTES_IN_MILLISECONDS,
-	timeUntilNextBeatCheckHigherLimit: utility.ONE_HOUR_IN_MILLISECONDS,
+	timeUntilNextBeatCheckLowerLimit: utility.TWO_HOURS_IN_MILLISECONDS,
+	timeUntilNextBeatCheckHigherLimit: utility.THREE_HOURS_IN_MILLISECONDS,
 	timeUntilNextBeatCheck: null,
 	lastChatTime: 0,
 	jail: {}
