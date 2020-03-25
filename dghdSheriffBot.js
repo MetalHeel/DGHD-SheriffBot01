@@ -189,9 +189,9 @@ function processDirectMention(content, authorId) {
 		Sheriff.theSheriff.channel.send("Yessum?");
 		return;
 	}
-	var mentionText = content.substring(content.indexOf(" ") + 1);
+	var mentionText = content.substring(content.indexOf(" ") + 1).toLowerCase();
 	var request = new sql.Request();
-	request.query("SELECT response FROM mention_response WHERE mention_text = '" + mentionText + "'", function (err, result) {
+	request.query("SELECT response FROM mention_response WHERE mention_text LIKE '%" + mentionText + "%'", function (err, result) {
 		if (err) {
 			console.log(err);
 			return;
