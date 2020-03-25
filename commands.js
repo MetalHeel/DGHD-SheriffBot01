@@ -13,7 +13,8 @@ module.exports = {
 	WHOS_IN_JAIL: 'whosinjail',
 	
 	processArrest: function(accuser, accusee) {
-		if (!accusee) {
+		// NOTE: The hard-coded ID is for the stream bot. This may change, keep an eye on it.
+		if (!accusee || accusee.id === "446844790588571674") {
 			Sheriff.theSheriff.channel.send("That ain't a person, ya chuckle head.");
 			return;
 		}

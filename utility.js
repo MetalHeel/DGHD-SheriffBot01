@@ -16,7 +16,7 @@ module.exports = {
 	
 	extractIdFromMention: function(mention) {
 		var startingIndex = 2;
-		if (mention.startsWith("<@!")) {
+		if (mention.startsWith("<@!") || mention.startsWith("<@&")) {
 			var startingIndex = 3;
 		}
 		

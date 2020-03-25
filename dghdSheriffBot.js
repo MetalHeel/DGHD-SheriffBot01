@@ -32,9 +32,9 @@ var Sheriff = require("./theSheriff.js");
 const botToken = process.argv.slice(2)[0];
 
 // User for general channel.
-const dghdQuarantineChannelID = "689656654329151613";
+//const dghdQuarantineChannelID = "689656654329151613";
 // Use for Sheriff's office.
-//const dghdQuarantineChannelID = "690331814560268365";
+const dghdQuarantineChannelID = "690331814560268365";
 var dghdQuarantineGeneral = null;
 
 sql.connect(config, function (err) {
@@ -84,7 +84,7 @@ client.on('message', message => {
 	}
 	
 	// Use for debugging.
-	// console.log("Content: " + message.content);
+	//console.log("Content: " + message.content);
 	
 	Sheriff.theSheriff.lastChatTime = new Date().getTime();
 	
@@ -148,6 +148,12 @@ function processCommand(author, message) {
 			}
 			client.users.fetch(utility.extractIdFromMention(messagePieces[1])).then(accusee => {
 				commands.processArrest(author, accusee);
+			}).catch(function(error) {
+				if (error.message === "Unknown User") {
+					Sheriff.theSheriff.channel.send("That ain't a person, ya chuckle head.");
+				} else {
+					console.error(error);
+				}
 			});
 			break;
 		}
