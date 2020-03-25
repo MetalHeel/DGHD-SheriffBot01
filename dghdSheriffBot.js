@@ -10,7 +10,6 @@ const sql = require('mssql');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const commands = require('./commands.js');
-const mentions = require('./directMentions.js');
 const utility = require('./utility.js');
 
 require("./timedEvents.js");
@@ -32,9 +31,9 @@ var Sheriff = require("./theSheriff.js");
 const botToken = process.argv.slice(2)[0];
 
 // User for general channel.
-//const dghdQuarantineChannelID = "689656654329151613";
+const dghdQuarantineChannelID = "689656654329151613";
 // Use for Sheriff's office.
-const dghdQuarantineChannelID = "690331814560268365";
+//const dghdQuarantineChannelID = "690331814560268365";
 var dghdQuarantineGeneral = null;
 
 sql.connect(config, function (err) {
@@ -185,33 +184,83 @@ function processCommand(author, message) {
 }
 
 function processDirectMention(content, authorId) {
-	// TODO: Have him wait briefly on a followup
+	// TODO: Have him wait briefly on a followup.
 	if (content === utility.encapsulateIdIntoMention(client.user.id) || content === utility.encapsulateIdIntoMention(client.user.id, true)) {
 		Sheriff.theSheriff.channel.send("Yessum?");
 		return;
 	}
-	// TODO: Should it be exclusively howdy? Not just include?
-	if (content.toLowerCase().includes("howdy")) {
-		mentions.processHowdy();
-		return;
-	}
-	if (content.toLowerCase().includes("thank you for your service")) {
-		mentions.processThankYouForYourService();
-		return;
-	}
-	if (content.toLowerCase().includes("can i have a beer please")) {
-		mentions.processCanIHaveABeerPlease();
-		return;
-	}
-	if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect) {
-		if (authorId !== Sheriff.theSheriff.currentAccuser) {
-			Sheriff.theSheriff.channel.send("Sorry partner, only the original accuser can press charges.");
+	var mentionText = content.substring(content.indexOf(" ") + 1);
+	var request = new sql.Request();
+	request.query("SELECT response FROM mention_response WHERE mention_text = '" + mentionText + "'", function (err, result) {
+		if (err) {
+			console.log(err);
 			return;
 		}
-		mentions.processPossibleAccusation(content);
-		return;
-	}
-	Sheriff.theSheriff.channel.send("Pardon me buckaroo, but I couldn't understand a got dang word you just said.");
+		if (Object.keys(result.recordset).length == 0) {
+			if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect) {
+				if (authorId !== Sheriff.theSheriff.currentAccuser) {
+					Sheriff.theSheriff.channel.send("Sorry partner, only the original accuser can press charges.");
+					return;
+				}
+				processPossibleAccusation(content);
+			} else {
+				Sheriff.theSheriff.channel.send("Pardon me buckaroo, but I couldn't understand a got dang word you just said.");
+			}
+		} else {
+			var choice = utility.getRandomNumberBetweenXAndY(0, Object.keys(result.recordset).length - 1);
+			Sheriff.theSheriff.channel.send(result.recordset[choice].response);
+		}
+	});
+}
+
+function processPossibleAccusation(possibleCrime) {
+	var request = new sql.Request();
+	var offense = null;
+	request.query("SELECT name, sentence FROM offense", function (err, result) {
+		if (err) {
+			console.log(err);
+			Sheriff.theSheriff.currentAccuser = null;
+			Sheriff.theSheriff.currentSuspect = null;
+			Sheriff.theSheriff.lastAccusationTime = null;
+			return;
+		}
+		
+		for (var i = 0; i < Object.keys(result.recordset).length; i++) {
+			if (possibleCrime.toLowerCase().includes(result.recordset[i].name.toLowerCase())) {
+				if (Sheriff.theSheriff.currentSuspect in Sheriff.theSheriff.jail) {
+					if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence > result.recordset[i].sentence) {
+						Sheriff.theSheriff.channel.send(utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already carrying out a longer sentence. We'll call that time served.");
+					} else if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence == result.recordset[i].sentence) {
+						Sheriff.theSheriff.channel.send("Weeeeell, " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already serving an equal sentence. We'll call that time served.");
+					} else {
+						Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence = result.recordset[i].sentence;
+						Sheriff.theSheriff.channel.send("This carries a sentence of " + result.recordset[i].sentence + " minutes. Welp " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", looks like you just booked a longer stay.");
+					}
+				} else {
+					if (result.recordset[i].sentence == 1) {
+						Sheriff.theSheriff.channel.send("This carries a sentence of " + result.recordset[i].sentence + " minute.");
+					} else {
+						Sheriff.theSheriff.channel.send("This carries a sentence of " + result.recordset[i].sentence + " minutes.");
+					}
+					Sheriff.theSheriff.channel.send("Alright " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", it's time to go to jail.");
+					Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect] = {};
+					Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].offense = result.recordset[i].name;
+					Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence = result.recordset[i].sentence;
+					Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].incarcerationTime = new Date().getTime();
+				}
+				Sheriff.theSheriff.currentAccuser = null;
+				Sheriff.theSheriff.currentSuspect = null;
+				Sheriff.theSheriff.lastAccusationTime = null;
+				return;
+			}
+		}
+		
+		Sheriff.theSheriff.channel.send("Sorry partner, that ain't against the law. Alright " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", you're free to go.");
+		
+		Sheriff.theSheriff.currentAccuser = null;
+		Sheriff.theSheriff.currentSuspect = null;
+		Sheriff.theSheriff.lastAccusationTime = null;
+	});
 }
 
 client.login(botToken);
