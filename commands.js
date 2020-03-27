@@ -106,11 +106,11 @@ module.exports = {
 			return;
 		}
 		if (sides < 0) {
-			Sheriff.theSheriff.channel.send("Ain't no such thing as a negative dice, ya idjit.");
+			messaging.sendResponse(messageVariationTypes.NEGATIVE_DICE);
 			return;
 		}
 		if (sides == 1) {
-			Sheriff.theSheriff.channel.send("Alright partner, you tell me: How in tarnation does something have one side? I s'pose a sphere has \"one side\", but you're only ever going to get one with it anyway, so what's the point?");
+			messaging.sendResponse(messageVariationTypes.ONE_SIDE_DIE);
 			return;
 		}
 		var roll = utility.getRandomNumberBetweenXAndY(1, sides);
@@ -128,7 +128,7 @@ module.exports = {
 	processWhosInJail: function() {
 		var inmateList = "";
 		if (Object.keys(Sheriff.theSheriff.jail).length == 0) {
-			Sheriff.theSheriff.channel.send("Jail's empty, partner.");
+			messaging.sendResponse(messageVariationTypes.EMPTY_JAIL);
 			return;
 		}
 		Object.keys(Sheriff.theSheriff.jail).forEach(function(inmate) {
