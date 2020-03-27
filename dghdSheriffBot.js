@@ -10,6 +10,8 @@ const sql = require('mssql');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 const commands = require('./commands.js');
+const messageVariationTypes = require('./messageVariationTypes.js');
+const messaging = require('./messaging.js');
 const utility = require('./utility.js');
 
 require("./timedEvents.js");
@@ -65,7 +67,7 @@ client.on('guildMemberAdd', member => {
 		return;
 	}
 	
-	Sheriff.theSheriff.channel.send("Welcome to the server, " + member.user.username + "!");
+	Sheriff.theSheriff.channel.send("Welcome to our humble town, " + member.user.username + "!");
 });
 
 // When a message arrives.
@@ -138,18 +140,18 @@ function processCommand(author, message) {
 		case commands.ARREST: {
 			// TODO: What's up with online vs offline?
 			if (messagePieces.length == 1) {
-				Sheriff.theSheriff.channel.send("Arrest who, partner?");
+				messaging.sendResponse(messageVariationTypes.ARREST_WHO);
 				break;
 			}
 			if (!(messagePieces[1].startsWith("<@!") || messagePieces[1].startsWith("<@")) && !messagePieces[1].endsWith(">")) {
-				Sheriff.theSheriff.channel.send("That ain't a person, ya chuckle head.");
+				messaging.sendResponse(messageVariationTypes.NOT_A_PERSON);
 				break;
 			}
 			client.users.fetch(utility.extractIdFromMention(messagePieces[1])).then(accusee => {
 				commands.processArrest(author, accusee);
 			}).catch(function(error) {
 				if (error.message === "Unknown User") {
-					Sheriff.theSheriff.channel.send("That ain't a person, ya chuckle head.");
+					messaging.sendResponse(messageVariationTypes.NOT_A_PERSON);
 				} else {
 					console.error(error);
 				}
@@ -199,67 +201,17 @@ function processDirectMention(content, authorId) {
 		if (Object.keys(result.recordset).length == 0) {
 			if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect) {
 				if (authorId !== Sheriff.theSheriff.currentAccuser) {
-					Sheriff.theSheriff.channel.send("Sorry partner, only the original accuser can press charges.");
+					messaging.sendResponse(messageVariationTypes.ORIGINAL_ACCUSER);
 					return;
 				}
-				processPossibleAccusation(content);
+				messaging.processPossibleAccusation(content);
 			} else {
-				Sheriff.theSheriff.channel.send("Pardon me buckaroo, but I couldn't understand a got dang word you just said.");
+				messaging.sendResponse(messageVariationTypes.COULD_NOT_UNDERSTAND);
 			}
 		} else {
 			var choice = utility.getRandomNumberBetweenXAndY(0, Object.keys(result.recordset).length - 1);
 			Sheriff.theSheriff.channel.send(result.recordset[choice].response);
 		}
-	});
-}
-
-function processPossibleAccusation(possibleCrime) {
-	var request = new sql.Request();
-	var offense = null;
-	request.query("SELECT name, sentence FROM offense", function (err, result) {
-		if (err) {
-			console.log(err);
-			Sheriff.theSheriff.currentAccuser = null;
-			Sheriff.theSheriff.currentSuspect = null;
-			Sheriff.theSheriff.lastAccusationTime = null;
-			return;
-		}
-		
-		for (var i = 0; i < Object.keys(result.recordset).length; i++) {
-			if (possibleCrime.toLowerCase().includes(result.recordset[i].name.toLowerCase())) {
-				if (Sheriff.theSheriff.currentSuspect in Sheriff.theSheriff.jail) {
-					if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence > result.recordset[i].sentence) {
-						Sheriff.theSheriff.channel.send(utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already carrying out a longer sentence. We'll call that time served.");
-					} else if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence == result.recordset[i].sentence) {
-						Sheriff.theSheriff.channel.send("Weeeeell, " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already serving an equal sentence. We'll call that time served.");
-					} else {
-						Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence = result.recordset[i].sentence;
-						Sheriff.theSheriff.channel.send("This carries a sentence of " + result.recordset[i].sentence + " minutes. Welp " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", looks like you just booked a longer stay.");
-					}
-				} else {
-					if (result.recordset[i].sentence == 1) {
-						Sheriff.theSheriff.channel.send("This carries a sentence of " + result.recordset[i].sentence + " minute.");
-					} else {
-						Sheriff.theSheriff.channel.send("This carries a sentence of " + result.recordset[i].sentence + " minutes.");
-					}
-					Sheriff.theSheriff.channel.send("Alright " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", it's time to go to jail.");
-					Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect] = {};
-					Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].offense = result.recordset[i].name;
-					Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence = result.recordset[i].sentence;
-					Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].incarcerationTime = new Date().getTime();
-				}
-				Sheriff.theSheriff.currentAccuser = null;
-				Sheriff.theSheriff.currentSuspect = null;
-				Sheriff.theSheriff.lastAccusationTime = null;
-				return;
-			}
-		}
-		
-		Sheriff.theSheriff.channel.send("Sorry partner, that ain't against the law. Alright " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", you're free to go.");
-		
-		Sheriff.theSheriff.currentAccuser = null;
-		Sheriff.theSheriff.currentSuspect = null;
-		Sheriff.theSheriff.lastAccusationTime = null;
 	});
 }
 

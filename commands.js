@@ -1,4 +1,6 @@
 ﻿const sql = require('mssql');
+const messageVariationTypes = require('./messageVariationTypes.js');
+const messaging = require('./messaging.js');
 const utility = require('./utility.js');
 
 var Sheriff = require("./theSheriff.js");
@@ -15,27 +17,27 @@ module.exports = {
 	processArrest: function(accuser, accusee) {
 		// NOTE: The hard-coded ID is for the stream bot. This may change, keep an eye on it.
 		if (!accusee || accusee.id === "446844790588571674") {
-			Sheriff.theSheriff.channel.send("That ain't a person, ya chuckle head.");
+			messaging.sendResponse(messageVariationTypes.NOT_A_PERSON);
 			return;
 		}
 		
 		if (accusee.id === Sheriff.theSheriff.userId) {
-			Sheriff.theSheriff.channel.send("Now why would I go and arrest myself? I ain't done nothin' wrong.");
+			messaging.sendResponse(messageVariationTypes.ARREST_SHERIFF);
 			return;
 		}
 		
 		if (accusee.id === accuser.id) {
-			Sheriff.theSheriff.channel.send("You want to arrest yourself, partner? That's a bit asinine.");
+			messaging.sendResponse(messageVariationTypes.ARREST_SELF);
 			return;
 		}
 		
 		if (accusee.id === Sheriff.theSheriff.currentSuspect) {
-			Sheriff.theSheriff.channel.send("Listen, I'm already working on it. Quit buggin' me.");
+			messaging.sendResponse(messageVariationTypes.ARREST_CURRENT_SUSPECT);
 			return;
 		}
 		
 		if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect) {
-			Sheriff.theSheriff.channel.send("I'm already working on a got dang case. Wait in line.");
+			messaging.sendResponse(messageVariationTypes.ALREADY_WORKING);
 			return;
 		}
 		
@@ -52,7 +54,7 @@ module.exports = {
 	
 	processCurrentSuspect: function() {
 		if (!Sheriff.theSheriff.currentAccuser && !Sheriff.theSheriff.currentSuspect) {
-			Sheriff.theSheriff.channel.send("All's quiet on the prairie. No crimes here.");
+			messaging.sendResponse(messageVariationTypes.NO_CRIMES);
 			return;
 		}
 		
@@ -61,7 +63,7 @@ module.exports = {
 	},
 	
 	processMeow: function() {
-		Sheriff.theSheriff.channel.send("I ain't no got dang cat.");
+		messaging.sendResponse(messageVariationTypes.MEOW_RESPONSE);
 	},
 	
 	processOffenses: function() {
@@ -96,11 +98,11 @@ module.exports = {
 	processRollDX(numberOfSidesString) {
 		var sides = Number(numberOfSidesString);
 		if (isNaN(sides) || !Number.isInteger(sides)) {
-			Sheriff.theSheriff.channel.send("I'm afraid that's not a good number, partner.");
+			messaging.sendResponse(messageVariationTypes.BAD_NUMBER);
 			return;
 		}
 		if (sides == 0) {
-			Sheriff.theSheriff.channel.send("A zero dice? Heck am I supposed to do with that? You got tumbleweed for brains?");
+			messaging.sendResponse(messageVariationTypes.ZERO_DICE);
 			return;
 		}
 		if (sides < 0) {

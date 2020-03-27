@@ -1,5 +1,5 @@
 const messageVariationTypes = require('./messageVariationTypes.js');
-const sql = require('mssql');
+const messaging = require('./messaging.js');
 const utility = require('./utility.js');
 
 var Sheriff = require("./theSheriff.js");
@@ -48,19 +48,8 @@ function processEvents() {
 	if (now.getTime() - Sheriff.theSheriff.lastCheckAroundTheBeat >= Sheriff.theSheriff.timeUntilNextBeatCheck) {
 		Sheriff.theSheriff.lastCheckAroundTheBeat = now.getTime();
 		Sheriff.theSheriff.timeUntilNextBeatCheck = utility.getRandomNumberBetweenXAndY(Sheriff.theSheriff.timeUntilNextBeatCheckLowerLimit, Sheriff.theSheriff.timeUntilNextBeatCheckHigherLimit);
-		
 		if (now.getHours() >= 8 && now.getTime() - Sheriff.theSheriff.lastChatTime < utility.ONE_HOUR_IN_MILLISECONDS) {
-			var request = new sql.Request();
-			request.query("SELECT variation FROM message_variation WHERE message_type = '" + messageVariationTypes.ON_THE_BEAT + "'", function (err, result) {
-				if (err) {
-					console.log(err);
-					return;
-				}
-				
-				var choice = utility.getRandomNumberBetweenXAndY(0, Object.keys(result.recordset).length - 1);
-				
-				Sheriff.theSheriff.channel.send(result.recordset[choice].variation);
-			});
+			messaging.sendResponse(messageVariationTypes.ON_THE_BEAT);
 		}
 	}
 }
