@@ -4,6 +4,12 @@ const utility = require('./utility.js');
 var Sheriff = require("./theSheriff.js");
 
 module.exports = {
+	ACCUSEE_MENTION_TOKEN: "${accusee_mention}",
+	ACCUSER_MENTION_TOKEN: "${accuser_mention}",
+	SENTENCE_TOKEN: "${sentence}",
+	STANDARD_USER_MENTION_TOKEN: "${user_mention}",
+	USERNAME_TOKEN: "${username}",
+	
 	sendResponse: function(messageType) {
 		var request = new sql.Request();
 		request.query("SELECT variation FROM message_variation WHERE message_type = '" + messageType + "'", function (err, result) {
