@@ -47,31 +47,23 @@ The sheriff will manifest and roll a dice comprising of the given sides and stat
 The sheriff will list all users currently in jail and the offense for which they are incarcerated.
 
 ## Direct Mentions
-If one directly mentions the sheriff and includes a statement the sheriff understands, a variety of behaviors will take place. All messages are case insensitive.
+If one directly mentions the sheriff and includes a statement the sheriff understands, a variety of behaviors will take place. The follwing sentences, and their subsets ("can I have a beer" works as well as "can I have a beer please?"), are understood by the sheriff. All messages are case insensitive.
 
-### Can I have a beer please?
-```
-@Sheriff can I have a beer please?
-```
-The sheriff will grab you a beer.
-
-### Howdy
-```
-@Sheriff howdy
-```
-The sheriff will greet you back.
+ - ```can I drink here?```
+ - ```can I have a beer please?```
+ - ```cowpoke me```
+ - ```eat my ass```
+ - ```howdy```
+ - ```thank you for your service```
+ - ```what the fuck```
 
 ### Accusation
 ```
 @Sheriff <an offense>
 ```
-This is used in tandem with the `arrest` command. After a user has been put under arrest, the accuser, and *only* the accuser can then mention the sheriff and add an offense. The sheriff, if the offense is valid, will proceed to put the user in jail for the entirety of their sentence. If a user is further incarcerated for any offense that holds a longer sentence, that user's current sentence will be extended to the longer one.
+The accusation mention has specific behavior that requires a more in depth description.
 
-### Thank you for your service
-```
-@Sheriff thank you for your service
-```
-The sheriff will express gratitude for the recognition.
+This is used in tandem with the `arrest` command. After a user has been put under arrest, the accuser, and *only* the accuser can then mention the sheriff and add an offense. The sheriff, if the offense is valid, will proceed to put the user in jail for the entirety of their sentence. If a user is further incarcerated for any offense that holds a longer sentence, that user's current sentence will be extended to the longer one.
 
 ## Timed Events
 A number of events take place on a regular timer during the lifetime of the sheriff's active duty.
