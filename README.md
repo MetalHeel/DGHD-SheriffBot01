@@ -75,6 +75,6 @@ After a minute, if an accusation has not been given an offense, the sheriff will
 The sheriff will regularly check each inmate's time spent in jail and will release them when they've served their sentence.
 
 ### Walking the Beat
-Every 40 to 60 minutes, if the chat has been active and it's not off hours (i.e. 12am to 8am), the sheriff will walk his beat. A variety of things can be checked in each instance, so one should be prepared for anything.
+Every two to three hours, if the chat has been active and it's not off hours (i.e. 12am to 8am), the sheriff will walk his beat. A variety of things can be checked in each instance, so one should be prepared for anything.
 
 # Please have fun and enjoy!
