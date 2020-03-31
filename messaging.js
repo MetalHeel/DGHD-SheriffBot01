@@ -1,4 +1,5 @@
 const sql = require('mssql');
+const messageVariationTypes = require('./messageVariationTypes.js');
 const utility = require('./utility.js');
 
 var Sheriff = require("./theSheriff.js");
@@ -22,6 +23,24 @@ module.exports = {
 		});
 	},
 	
+	sendResponseWithReplacements: function(messageType, replacements) {
+		var request = new sql.Request();
+		request.query("SELECT variation FROM message_variation WHERE message_type = '" + messageType + "'", function (err, result) {
+			if (err) {
+				console.log(err);
+				return;
+			}
+			var choice = utility.getRandomNumberBetweenXAndY(0, Object.keys(result.recordset).length - 1);
+			var variation = result.recordset[choice].variation;
+			if (replacements) {
+				Object.keys(replacements).forEach(function(token) {
+					variation = variation.replace(token, replacements[token]);
+				});
+			}
+			Sheriff.theSheriff.channel.send(variation);
+		});
+	},
+	
 	processPossibleAccusation: function(possibleCrime) {
 		var request = new sql.Request();
 		var offense = null;
@@ -33,17 +52,19 @@ module.exports = {
 				Sheriff.theSheriff.lastAccusationTime = null;
 				return;
 			}
-			
 			for (var i = 0; i < Object.keys(result.recordset).length; i++) {
 				if (possibleCrime.toLowerCase().includes(result.recordset[i].name.toLowerCase())) {
+					var replacements = {};
+					replacements[module.exports.STANDARD_USER_MENTION_TOKEN] = utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect);
+					replacements[module.exports.SENTENCE_TOKEN] = result.recordset[i].sentence;
 					if (Sheriff.theSheriff.currentSuspect in Sheriff.theSheriff.jail) {
 						if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence > result.recordset[i].sentence) {
-							Sheriff.theSheriff.channel.send(utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already carrying out a longer sentence. We'll call that time served.");
+							module.exports.sendResponseWithReplacements(messageVariationTypes.LONGER_SENTENCE, replacements);
 						} else if (Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence == result.recordset[i].sentence) {
-							Sheriff.theSheriff.channel.send("Weeeeell, " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " is already serving an equal sentence. We'll call that time served.");
+							module.exports.sendResponseWithReplacements(messageVariationTypes.EQUAL_SENTENCE, replacements);
 						} else {
 							Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence = result.recordset[i].sentence;
-							Sheriff.theSheriff.channel.send("This carries a sentence of " + result.recordset[i].sentence + " minutes. Welp " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", looks like you just booked a longer stay.");
+							module.exports.sendResponseWithReplacements(messageVariationTypes.SHORTER_SENTENCE, replacements);
 						}
 					} else {
 						if (result.recordset[i].sentence == 1) {
@@ -51,7 +72,7 @@ module.exports = {
 						} else {
 							Sheriff.theSheriff.channel.send("This carries a sentence of " + result.recordset[i].sentence + " minutes.");
 						}
-						Sheriff.theSheriff.channel.send("Alright " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", it's time to go to jail.");
+						module.exports.sendResponseWithReplacements(messageVariationTypes.GO_TO_JAIL, replacements);
 						Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect] = {};
 						Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].offense = result.recordset[i].name;
 						Sheriff.theSheriff.jail[Sheriff.theSheriff.currentSuspect].sentence = result.recordset[i].sentence;
@@ -63,9 +84,9 @@ module.exports = {
 					return;
 				}
 			}
-			
-			Sheriff.theSheriff.channel.send("Sorry partner, that ain't against the law. Alright " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", you're free to go.");
-			
+			var replacements = {};
+			replacements[module.exports.STANDARD_USER_MENTION_TOKEN] = utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect);
+			module.exports.sendResponseWithReplacements(messageVariationTypes.NOT_A_CRIME, replacements);
 			Sheriff.theSheriff.currentAccuser = null;
 			Sheriff.theSheriff.currentSuspect = null;
 			Sheriff.theSheriff.lastAccusationTime = null;

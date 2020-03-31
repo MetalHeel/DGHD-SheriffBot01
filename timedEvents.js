@@ -18,14 +18,17 @@ function processEvents() {
 	// Check last accusation.
 	if (Sheriff.theSheriff.currentAccuser && Sheriff.theSheriff.currentSuspect && Sheriff.theSheriff.lastAccusationTime) {
 		var changeInTime = now.getTime() - Sheriff.theSheriff.lastAccusationTime;
+		var replacements = {};
 		if (changeInTime >= 60000) {
-			Sheriff.theSheriff.channel.send("Alright " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentAccuser) + ", I ain't gonna wait around here all day. " +
-				utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + ", get on out of here and stay out of trouble.");
+			replacements[messaging.ACCUSER_MENTION_TOKEN] = utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentAccuser);
+			replacements[messaging.ACCUSEE_MENTION_TOKEN] = utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect);
+			messaging.sendResponseWithReplacements(messageVariationTypes.NO_CHARGE, replacements);
 			Sheriff.theSheriff.currentAccuser = null;
 			Sheriff.theSheriff.currentSuspect = null;
 			Sheriff.theSheriff.lastAccusationTime = null;
 		} else if (changeInTime >= 30000 && changeInTime < 31000) {
-			Sheriff.theSheriff.channel.send("Listen " + utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentAccuser) + ", you gonna charge this person or not?");
+			replacements[messaging.STANDARD_USER_MENTION_TOKEN] = utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentAccuser);
+			messaging.sendResponseWithReplacements(messageVariationTypes.NO_CHARGE_YET, replacements);
 		}
 	}
 	
@@ -35,7 +38,9 @@ function processEvents() {
 		var incarcerationTime = Sheriff.theSheriff.jail[inmate].incarcerationTime;
 		if (now.getTime() - incarcerationTime >= Sheriff.theSheriff.jail[inmate].sentence * 60000) {
 			finishedSentences.push(inmate);
-			Sheriff.theSheriff.channel.send("Alright " + utility.encapsulateIdIntoMention(inmate) + ", you've served out your sentence. You're free to go.");
+			var replacements = {};
+			replacements[messaging.STANDARD_USER_MENTION_TOKEN] = utility.encapsulateIdIntoMention(inmate);
+			messaging.sendResponseWithReplacements(messageVariationTypes.SENTENCE_SERVED, replacements);
 		}
 		if (finishedSentences.length > 0) {
 			for (var i = 0; i < finishedSentences.length; i++) {

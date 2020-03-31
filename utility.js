@@ -19,7 +19,6 @@ module.exports = {
 		if (mention.startsWith("<@!") || mention.startsWith("<@&")) {
 			var startingIndex = 3;
 		}
-		
 		return mention.substring(startingIndex, mention.length - 1);
 	},
 	

@@ -3,7 +3,6 @@
  *  - Error handling.
  *  - Guarantee the promises.
  *  - Figure out how to use mssql with objects instead of just strings.
- *  - Make this data driven (responses in the database, etc.).
  */
 
 const sql = require('mssql');
@@ -57,7 +56,6 @@ client.on('ready', () => {
 	});*/
 	
 	client.channels.fetch(dghdQuarantineChannelID).then(channel => Sheriff.theSheriff.channel = channel);
-	
 	console.log("Connected as " + client.user.id);
 });
 
@@ -66,8 +64,9 @@ client.on('guildMemberAdd', member => {
 	if (!Sheriff.theSheriff.channel) {
 		return;
 	}
-	
-	Sheriff.theSheriff.channel.send("Welcome to our humble town, " + member.user.username + "!");
+	var replacements = {};
+	replacements[messaging.USERNAME_TOKEN] = member.user.username;
+	messaging.sendResponseWithReplacements(messageVariationTypes.WELCOME, replacements);
 });
 
 // When a message arrives.
@@ -75,11 +74,9 @@ client.on('message', message => {
 	if (!Sheriff.theSheriff.channel) {
 		return;
 	}
-	
 	if (message.channel != Sheriff.theSheriff.channel) {
 		return;
 	}
-	
 	if (message.author == client.user) {
 		return;
 	}
@@ -88,7 +85,6 @@ client.on('message', message => {
 	//console.log("Content: " + message.content);
 	
 	Sheriff.theSheriff.lastChatTime = new Date().getTime();
-	
 	if (message.content.startsWith("!")) {
 		processCommand(message.author, message.content);
 	} else if (utility.isDirectMention(message.content, client.user.id)) {
@@ -103,8 +99,10 @@ client.on('message', message => {
 					return;
 				}
 				if (utility.getRandomNumberBetweenXAndY(1, 100) <= result.recordset[0].reprimand_chance) {
-					Sheriff.theSheriff.channel.send("Hey " + utility.encapsulateIdIntoMention(message.author.id) + ", pipe down in there!");
-				}				
+					var replacements = {};
+					replacements[messaging.STANDARD_USER_MENTION_TOKEN] = utility.encapsulateIdIntoMention(message.author.id);
+					messaging.sendResponseWithReplacements(messageVariationTypes.REPRIMAND, replacements);
+				}
 			});
 		}
 	}

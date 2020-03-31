@@ -45,7 +45,9 @@ module.exports = {
 		Sheriff.theSheriff.currentSuspect = accusee.id;
 		Sheriff.theSheriff.lastAccusationTime = new Date().getTime();
 		
-		Sheriff.theSheriff.channel.send("You want to put " + utility.encapsulateIdIntoMention(accusee) + " in jail? On what charges?");
+		var replacements = {};
+		replacements[messaging.STANDARD_USER_MENTION_TOKEN] = utility.encapsulateIdIntoMention(accusee);
+		messaging.sendResponseWithReplacements(messageVariationTypes.SUCCESSFUL_ARREST, replacements);
 	},
 	
 	processCommands: function() {
@@ -57,9 +59,10 @@ module.exports = {
 			messaging.sendResponse(messageVariationTypes.NO_CRIMES);
 			return;
 		}
-		
-		Sheriff.theSheriff.channel.send(utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentAccuser) + " seems to think " +
-			utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect) + " has committed a crime.");
+		var replacements = {};
+		replacements[messaging.ACCUSER_MENTION_TOKEN] = utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentAccuser);
+		replacements[messaging.ACCUSEE_MENTION_TOKEN] = utility.encapsulateIdIntoMention(Sheriff.theSheriff.currentSuspect);
+		messaging.sendResponseWithReplacements(messageVariationTypes.CURRENT_SUSPECT, replacements);
 	},
 	
 	processMeow: function() {
