@@ -65,7 +65,7 @@ client.on('guildMemberAdd', member => {
 		return;
 	}
 	var replacements = {};
-	replacements[messaging.USERNAME_TOKEN] = member.user.username;
+	replacements[messaging.USERNAME_TOKEN] = utility.encapsulateIdIntoMention(member.user.username);
 	messaging.sendResponseWithReplacements(messageVariationTypes.WELCOME, replacements);
 });
 
