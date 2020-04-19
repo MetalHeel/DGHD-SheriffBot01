@@ -40,6 +40,12 @@ The sheriff will list all offenses of which a user can be accused, along with th
 ```
 The sheriff will manifest and roll a dice comprising of the given sides and state the outcome of the roll. A "d2" will result in the flipping of a coin.
 
+### togglepatrol
+```
+!togglepatrol
+```
+Toggles whether the Sheriff will do his patrol or not.
+
 ### whosinjail
 ```
 !whosinjail
