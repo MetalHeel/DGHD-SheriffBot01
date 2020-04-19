@@ -176,6 +176,10 @@ function processCommand(author, message) {
 			commands.processRollDX(possibleCommand.substring(5));
 			break;
 		}
+		case commands.TOGGLE_PATROL: {
+			commands.processTogglePatrol();
+			break;
+		}
 		case commands.WHOS_IN_JAIL: {
 			commands.processWhosInJail();
 			break;

@@ -50,7 +50,7 @@ function processEvents() {
 	});
 	
 	// Check the last check around the beat.
-	if (now.getTime() - Sheriff.theSheriff.lastCheckAroundTheBeat >= Sheriff.theSheriff.timeUntilNextBeatCheck) {
+	if (Sheriff.theSheriff.patrol && now.getTime() - Sheriff.theSheriff.lastCheckAroundTheBeat >= Sheriff.theSheriff.timeUntilNextBeatCheck) {
 		Sheriff.theSheriff.lastCheckAroundTheBeat = now.getTime();
 		Sheriff.theSheriff.timeUntilNextBeatCheck = utility.getRandomNumberBetweenXAndY(Sheriff.theSheriff.timeUntilNextBeatCheckLowerLimit, Sheriff.theSheriff.timeUntilNextBeatCheckHigherLimit);
 		if (now.getHours() >= 8 && now.getTime() - Sheriff.theSheriff.lastChatTime < utility.ONE_HOUR_IN_MILLISECONDS) {

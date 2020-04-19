@@ -12,6 +12,7 @@ module.exports = {
 	MEOW: 'meow',
 	OFFENSES: 'offenses',
 	ROLL_D: 'rolld',
+	TOGGLE_PATROL: 'togglepatrol',
 	WHOS_IN_JAIL: 'whosinjail',
 	
 	processArrest: function(accuser, accusee) {
@@ -125,6 +126,15 @@ module.exports = {
 			}
 		} else {
 			Sheriff.theSheriff.channel.send("Looks like you rolled a " + roll + " partner.");
+		}
+	},
+	
+	processTogglePatrol() {
+		Sheriff.theSheriff.patrol = !Sheriff.theSheriff.patrol;
+		if (Sheriff.theSheriff.patrol) {
+			Sheriff.theSheriff.channel.send("Alright, alright. I'll get to steppin'.");
+		} else {
+			Sheriff.theSheriff.channel.send("Time for a break huh? Sounds good to me, no more patrols..");
 		}
 	},
 	
