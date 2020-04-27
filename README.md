@@ -44,7 +44,7 @@ The sheriff will manifest and roll a dice comprising of the given sides and stat
 ```
 !togglepatrol
 ```
-Toggles whether the Sheriff will do his patrol or not.
+Toggles whether the Sheriff will do his patrol or not. Note: Only admins can toggle the patrol.
 
 ### whosinjail
 ```
