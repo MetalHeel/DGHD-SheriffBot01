@@ -130,11 +130,12 @@ module.exports = {
 	},
 	
 	processTogglePatrol() {
+		// TODO: Make responses varied.
 		Sheriff.theSheriff.patrol = !Sheriff.theSheriff.patrol;
 		if (Sheriff.theSheriff.patrol) {
 			Sheriff.theSheriff.channel.send("Alright, alright. I'll get to steppin'.");
 		} else {
-			Sheriff.theSheriff.channel.send("Time for a break huh? Sounds good to me, no more patrols..");
+			Sheriff.theSheriff.channel.send("Time for a break huh? Sounds good to me, no more patrols.");
 		}
 	},
 	

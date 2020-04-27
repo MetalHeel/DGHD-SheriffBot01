@@ -82,11 +82,11 @@ client.on('message', message => {
 	}
 	
 	// Use for debugging.
-	//console.log("Content: " + message.content);
+	//console.log("Admin: " + message.member.permissions.has('ADMINISTRATOR'));
 	
 	Sheriff.theSheriff.lastChatTime = new Date().getTime();
 	if (message.content.startsWith("!")) {
-		processCommand(message.author, message.content);
+		processCommand(message.author, message.content, message.member.permissions.has('ADMINISTRATOR'));
 	} else if (utility.isDirectMention(message.content, client.user.id)) {
 		processDirectMention(message.content, message.author.id);
 	} else {
@@ -108,7 +108,7 @@ client.on('message', message => {
 	}
 });
 
-function processCommand(author, message) {
+function processCommand(author, message, isAdmin) {
 	var messagePieces = message.split(" ");
 	
 	if (messagePieces.length < 1) {
@@ -177,6 +177,9 @@ function processCommand(author, message) {
 			break;
 		}
 		case commands.TOGGLE_PATROL: {
+			if (!isAdmin) {
+				break;
+			}
 			commands.processTogglePatrol();
 			break;
 		}
