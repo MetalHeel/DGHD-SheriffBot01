@@ -11,7 +11,7 @@ ALTER TABLE some_table ADD some_column INT NOT NULL;
 
 UPDATE offenses SET reprimand_chance = 5 WHERE name = 'Lollygagging';
 
-SELECT * FROM offenses;
+SELECT * FROM offense;
 
 DELETE FROM jail WHERE offense_name = 'Lollygagging';
 
@@ -35,7 +35,7 @@ INSERT INTO message_variation (message_type, variation) VALUES
 	('zerodice', 'Oh, I see someone''s a jokester.');
 
 INSERT INTO offense (name, sentence, reprimand_chance, is_high_profile) VALUES
-	('Not Drinking at Work', 3, 20, 0);
+	('Obstruction of Highway Passageway', 3, 20, 0);
 
 SELECT * FROM mention_response ORDER BY mention_text;
 
