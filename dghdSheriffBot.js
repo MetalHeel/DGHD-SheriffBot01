@@ -143,14 +143,20 @@ client.on('raw', packet => {
 								return;
 							}
 						}
-						channel.send("Another one for the ole pinboard.");
-						pinboardChannel.send({embed:{
-							author: {
-								name: user.username,
-								icon_url: user.avatarURL()
-							},
-							description: newDescription
-						}});
+						client.users.fetch(packet.d.user_id).then(pinner => {
+							pinboardChannel.send({embed:{
+								author: {
+									name: user.username,
+									icon_url: user.avatarURL()
+								},
+								description: newDescription
+							}});
+							channel.send({embed:{
+								color: 0xC27C0E,
+								description: utility.encapsulateIdIntoMention(pinner.id) + " done pinned [a dang ole message](" + message.url +
+									") from this channel. See all pins in " + utility.encapsulateIdIntoChannelMention(pinboardChannelID) + "."
+							}});
+						});
 					});
 				});
 			});

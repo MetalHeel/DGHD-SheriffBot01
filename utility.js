@@ -14,6 +14,10 @@ module.exports = {
 		}
 	},
 	
+	encapsulateIdIntoChannelMention: function(channelId) {
+		return "<#" + channelId + ">";
+	},
+	
 	extractIdFromMention: function(mention) {
 		var startingIndex = 2;
 		if (mention.startsWith("<@!") || mention.startsWith("<@&")) {
