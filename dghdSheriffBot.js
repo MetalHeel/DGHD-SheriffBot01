@@ -139,7 +139,7 @@ client.on('raw', packet => {
 							if (!messageEmbed.author) {
 								continue;
 							}
-							if (messageEmbed.author.name === user.username) {
+							if (messageEmbed.author.name === user.username && messageEmbed.description === newDescription) {
 								return;
 							}
 						}
