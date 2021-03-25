@@ -124,6 +124,9 @@ client.on('raw', packet => {
 	}
 	client.channels.fetch(packet.d.channel_id).then(channel => {
 		channel.messages.fetch(packet.d.message_id).then(message => {
+			if (message.author.id === Sheriff.theSheriff.userId) {
+				return;
+			}
 			client.users.fetch(message.author.id).then(user => {
 				client.channels.fetch(pinboardChannelID).then(pinboardChannel => {
 					pinboardChannel.messages.fetch().then(messages => {
