@@ -1,0 +1,32 @@
+{
+  "name": "dghd-sheriffbot01",
+  "version": "1.0.0",
+  "description": "Leave everything to the big man sheriff. Mo mo knows how to protect and how to serve, and have a li'l fun in between.",
+  "main": "commands.js",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "bl": "^4.1.0",
+    "debug": "^4.3.1",
+    "discord.js": "^12.5.1",
+    "form-data": "^3.0.1",
+    "node-fetch": "^2.6.1",
+    "mssql": "^6.3.1",
+    "prism-media": "^1.2.9",
+    "ws": "^7.4.4",
+    "xmldom": "^0.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MetalHeel/DGHD-SheriffBot01.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/MetalHeel/DGHD-SheriffBot01/issues"
+  },
+  "homepage": "https://github.com/MetalHeel/DGHD-SheriffBot01#readme"
+}
