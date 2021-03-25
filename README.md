@@ -83,4 +83,7 @@ The sheriff will regularly check each inmate's time spent in jail and will relea
 ### Walking the Beat
 Every two to three hours, if the chat has been active and it's not off hours (i.e. 12am to 8am), the sheriff will walk his beat. A variety of things can be checked in each instance, so one should be prepared for anything.
 
+## Pins
+React to messages with the :pin: emoji to pin messages to the pinboard. This is to allow for pins beyond the 50 pin limit enforced by Discord.
+
 # Please have fun and enjoy!
