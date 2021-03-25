@@ -3,6 +3,7 @@ const utility = require('./utility.js');
 module.exports.theSheriff = {
 	userId: null,
 	channel: null,
+	pinboard: null,
 	patrol: false,
 	currentAccuser: null,
 	currentSuspect: null,

@@ -33,9 +33,8 @@ const botToken = process.argv.slice(2)[0];
 
 // User for general channel.
 const dghdQuarantineChannelID = "689656654329151613";
-// Use for Sheriff's office.
-//const dghdQuarantineChannelID = "690331814560268365";
-var dghdQuarantineGeneral = null;
+const pinboardChannelID = "797202566555107378";
+const laboratoryChannelID = "824393931176804373";
 
 sql.connect(config, function (err) {
 	if (err) {
@@ -55,7 +54,11 @@ client.on('ready', () => {
 		console.log(channel.name + " " + channel.id);
 	});*/
 	
-	client.channels.fetch(dghdQuarantineChannelID).then(channel => Sheriff.theSheriff.channel = channel);
+	var channelToUse = dghdQuarantineChannelID;
+	// Use for testing
+	//var channelToUse = laboratoryChannelID;
+	
+	client.channels.fetch(channelToUse).then(channel => Sheriff.theSheriff.channel = channel);
 	console.log("Connected as " + client.user.id);
 });
 
@@ -106,6 +109,50 @@ client.on('message', message => {
 			});
 		}
 	}
+});
+
+// Raw event catcher. For now just used for pins.
+client.on('raw', packet => {
+	if (packet.t !== "MESSAGE_REACTION_ADD") {
+		return;
+	}
+	if (packet.d.emoji.name !== "pin") {
+		return;
+	}
+	if (packet.d.emoji.id !== "824431020476334120") {
+		return;
+	}
+	client.channels.fetch(packet.d.channel_id).then(channel => {
+		channel.messages.fetch(packet.d.message_id).then(message => {
+			client.users.fetch(message.author.id).then(user => {
+				client.channels.fetch(pinboardChannelID).then(pinboardChannel => {
+					pinboardChannel.messages.fetch().then(messages => {
+						var newDescription = message.content + "\n\n[Jump to Message](" + message.url + ")";
+						for (var entry of messages.entries()) {
+							var messageEmbed = entry[1].embeds[0];
+							if (!messageEmbed) {
+								continue;
+							}
+							if (!messageEmbed.author) {
+								continue;
+							}
+							if (messageEmbed.author.name === user.username) {
+								return;
+							}
+						}
+						channel.send("Another one for the ole pinboard.");
+						pinboardChannel.send({embed:{
+							author: {
+								name: user.username,
+								icon_url: user.avatarURL()
+							},
+							description: newDescription
+						}});
+					});
+				});
+			});
+		});
+	});
 });
 
 function processCommand(author, message, isAdmin) {
