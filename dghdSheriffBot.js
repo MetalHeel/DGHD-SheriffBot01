@@ -54,11 +54,11 @@ client.on('ready', () => {
 		console.log(channel.name + " " + channel.id);
 	});*/
 	
-	var channelToUse = dghdQuarantineChannelID;
+	var channelIdToUse = dghdQuarantineChannelID;
 	// Use for testing
-	//var channelToUse = laboratoryChannelID;
+	//var channelIdToUse = laboratoryChannelID;
 	
-	client.channels.fetch(channelToUse).then(channel => Sheriff.theSheriff.channel = channel);
+	client.channels.fetch(channelIdToUse).then(channel => Sheriff.theSheriff.channel = channel);
 	console.log("Connected as " + client.user.id);
 });
 
@@ -153,7 +153,7 @@ client.on('raw', packet => {
 							}});
 							channel.send({embed:{
 								color: 0xC27C0E,
-								description: utility.encapsulateIdIntoMention(pinner.id) + " done pinned [a dang ole message](" + message.url +
+								description: utility.encapsulateIdIntoMention(pinner.id, true) + " done pinned [a dang ole message](" + message.url +
 									") from this channel. See all pins in " + utility.encapsulateIdIntoChannelMention(pinboardChannelID) + "."
 							}});
 						});

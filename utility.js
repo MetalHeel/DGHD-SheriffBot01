@@ -6,8 +6,8 @@ module.exports = {
 	TWO_HOURS_IN_MILLISECONDS: 7200000,
 	THREE_HOURS_IN_MILLISECONDS: 10800000,
 	
-	encapsulateIdIntoMention: function(userId, asMobile = false) {
-		if (asMobile) {
+	encapsulateIdIntoMention: function(userId, useNickname = false) {
+		if (useNickname) {
 			return "<@" + userId + ">";
 		} else {
 			return "<@!" + userId + ">";
