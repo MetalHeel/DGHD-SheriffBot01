@@ -144,18 +144,23 @@ client.on('raw', packet => {
 							}
 						}
 						client.users.fetch(packet.d.user_id).then(pinner => {
-							pinboardChannel.send({embed:{
-								author: {
-									name: user.username,
-									icon_url: user.avatarURL()
-								},
-								description: newDescription
-							}});
-							channel.send({embed:{
-								color: 0xC27C0E,
-								description: utility.encapsulateIdIntoMention(pinner.id, true) + " done pinned [a dang ole message](" + message.url +
-									") from this channel. See all pins in " + utility.encapsulateIdIntoChannelMention(pinboardChannelID) + "."
-							}});
+							var embed = new Discord.MessageEmbed();
+							embed.setAuthor(user.username, user.avatarURL());
+							embed.setDescription(newDescription);
+							/*if (message.attachments && message.attachments.size > 0) {
+								var files = [];
+								for (var entry of message.attachments.entries()) {
+									var attachment = entry[1];
+									files.push(attachment.attachment);
+								}
+								embed.attachFiles(files);
+							}*/ 
+							pinboardChannel.send(embed);
+							var notificationEmbed = new Discord.MessageEmbed();
+							notificationEmbed.setColor("#C27C0E");
+							notificationEmbed.setDescription(utility.encapsulateIdIntoMention(pinner.id, true) + " done pinned [a dang ole message](" +
+								message.url + ") from this channel. See all pins in " + utility.encapsulateIdIntoChannelMention(pinboardChannelID) + ".");
+							channel.send(notificationEmbed);
 						});
 					});
 				});
