@@ -55,7 +55,7 @@ client.on('ready', () => {
 	});*/
 	
 	var channelIdToUse = dghdQuarantineChannelID;
-	// Use for testing
+	// Use for connecting to the laboratory channel.
 	//var channelIdToUse = laboratoryChannelID;
 	
 	client.channels.fetch(channelIdToUse).then(channel => Sheriff.theSheriff.channel = channel);
