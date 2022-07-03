@@ -4,6 +4,7 @@
   "description": "Leave everything to the big man sheriff. Mo mo knows how to protect and how to serve, and have a li'l fun in between.",
   "main": "dghdSheriffBot.js",
   "dependencies": {
+    "@xmldom/xmldom": "^0.8.2",
     "axios": "^0.27.2",
     "bl": "^4.1.0",
     "debug": "^4.3.1",
@@ -12,8 +13,7 @@
     "mssql": "^6.3.1",
     "node-fetch": "^3.2.6",
     "prism-media": "^1.2.9",
-    "ws": "^7.5.2",
-    "xmldom": "^0.6.0"
+    "ws": "^7.5.2"
   },
   "devDependencies": {},
   "scripts": {
