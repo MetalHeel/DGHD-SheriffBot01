@@ -6,8 +6,26 @@
  */
 
 const sql = require('mssql');
-const Discord = require('discord.js');
-const client = new Discord.Client();
+const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const client = new Client({ intents: [
+	GatewayIntentBits.DirectMessageReactions,
+	GatewayIntentBits.DirectMessageTyping,
+	GatewayIntentBits.DirectMessages,
+	GatewayIntentBits.Guilds,
+	GatewayIntentBits.GuildBans,
+	GatewayIntentBits.GuildEmojisAndStickers,
+	GatewayIntentBits.GuildIntegrations,
+	GatewayIntentBits.GuildInvites,
+	GatewayIntentBits.GuildMembers,
+	GatewayIntentBits.GuildMessageReactions,
+	GatewayIntentBits.GuildMessageTyping,
+	GatewayIntentBits.GuildMessages,
+	GatewayIntentBits.GuildPresences,
+	GatewayIntentBits.GuildScheduledEvents,
+	GatewayIntentBits.GuildVoiceStates,
+	GatewayIntentBits.GuildWebhooks,
+	GatewayIntentBits.MessageContent
+] });
 const commands = require('./commands.js');
 const messageVariationTypes = require('./messageVariationTypes.js');
 const messaging = require('./messaging.js');
@@ -73,7 +91,7 @@ client.on('guildMemberAdd', member => {
 });
 
 // When a message arrives.
-client.on('message', message => {
+client.on('messageCreate', message => {
 	if (!Sheriff.theSheriff.channel) {
 		return;
 	}
@@ -144,8 +162,8 @@ client.on('raw', packet => {
 							}
 						}
 						client.users.fetch(packet.d.user_id).then(pinner => {
-							var embed = new Discord.MessageEmbed();
-							embed.setAuthor(user.username, user.avatarURL());
+							var embed = new EmbedBuilder();
+							embed.setAuthor({ name: user.username, iconURL: user.avatarURL() });
 							embed.setDescription(newDescription);
 							/*if (message.attachments && message.attachments.size > 0) {
 								var files = [];
@@ -155,12 +173,12 @@ client.on('raw', packet => {
 								}
 								embed.attachFiles(files);
 							}*/ 
-							pinboardChannel.send(embed);
-							var notificationEmbed = new Discord.MessageEmbed();
+							pinboardChannel.send({ embeds: [embed] });
+							var notificationEmbed = new EmbedBuilder();
 							notificationEmbed.setColor("#C27C0E");
 							notificationEmbed.setDescription(utility.encapsulateIdIntoMention(pinner.id, true) + " done pinned [a dang ole message](" +
 								message.url + ") from this channel. See all pins in " + utility.encapsulateIdIntoChannelMention(pinboardChannelID) + ".");
-							channel.send(notificationEmbed);
+							channel.send({ embeds: [notificationEmbed] });
 						});
 					});
 				});
