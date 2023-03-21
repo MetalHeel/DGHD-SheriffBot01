@@ -6,7 +6,7 @@
  */
 
 const sql = require('mssql');
-const { Client, GatewayIntentBits, EmbedBuilder } = require('discord.js');
+const { Client, EmbedBuilder, GatewayIntentBits, PermissionsBitField } = require('discord.js');
 const client = new Client({ intents: [
 	GatewayIntentBits.DirectMessageReactions,
 	GatewayIntentBits.DirectMessageTyping,
@@ -103,11 +103,11 @@ client.on('messageCreate', message => {
 	}
 	
 	// Use for debugging.
-	//console.log("Admin: " + message.member.permissions.has('ADMINISTRATOR'));
+	//console.log("Admin: " + message.member.permissions.has(PermissionsBitField.Flags.Administrator));
 	
 	Sheriff.theSheriff.lastChatTime = new Date().getTime();
 	if (message.content.startsWith("!")) {
-		processCommand(message.author, message.content, message.member.permissions.has('ADMINISTRATOR'));
+		processCommand(message.author, message.content, message.member.permissions.has(PermissionsBitField.Flags.Administrator));
 	} else if (utility.isDirectMention(message.content, client.user.id)) {
 		processDirectMention(message.content, message.author.id);
 	} else {
