@@ -72,9 +72,9 @@ client.on('ready', () => {
 		console.log(channel.name + " " + channel.id);
 	});*/
 	
-	var channelIdToUse = dghdQuarantineChannelID;
+	//var channelIdToUse = dghdQuarantineChannelID;
 	// Use for connecting to the laboratory channel.
-	//var channelIdToUse = laboratoryChannelID;
+	var channelIdToUse = laboratoryChannelID;
 	
 	client.channels.fetch(channelIdToUse).then(channel => Sheriff.theSheriff.channel = channel);
 	console.log("Connected as " + client.user.id);
