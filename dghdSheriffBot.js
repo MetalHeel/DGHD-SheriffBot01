@@ -3,6 +3,7 @@
  *  - Error handling.
  *  - Guarantee the promises.
  *  - Figure out how to use mssql with objects instead of just strings.
+ *  - Need some sort of debug command so I can simulate guild adds and such.
  */
 
 const sql = require('mssql');
@@ -72,9 +73,9 @@ client.on('ready', () => {
 		console.log(channel.name + " " + channel.id);
 	});*/
 	
-	//var channelIdToUse = dghdQuarantineChannelID;
+	var channelIdToUse = dghdQuarantineChannelID;
 	// Use for connecting to the laboratory channel.
-	var channelIdToUse = laboratoryChannelID;
+	//var channelIdToUse = laboratoryChannelID;
 	
 	client.channels.fetch(channelIdToUse).then(channel => Sheriff.theSheriff.channel = channel);
 	console.log("Connected as " + client.user.id);
@@ -86,7 +87,7 @@ client.on('guildMemberAdd', member => {
 		return;
 	}
 	var replacements = {};
-	replacements[messaging.USERNAME_TOKEN] = utility.encapsulateIdIntoMention(member.user.username);
+	replacements[messaging.USERNAME_TOKEN] = utility.encapsulateIdIntoMention(member.user.id);
 	messaging.sendResponseWithReplacements(messageVariationTypes.WELCOME, replacements);
 });
 
