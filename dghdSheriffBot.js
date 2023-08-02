@@ -158,7 +158,7 @@ client.on('raw', packet => {
 							if (!messageEmbed.author) {
 								continue;
 							}
-							if (messageEmbed.author.name === user.username && messageEmbed.description === newDescription) {
+							if (messageEmbed.description.includes(message.url)) {
 								return;
 							}
 						}
@@ -166,15 +166,14 @@ client.on('raw', packet => {
 							var embed = new EmbedBuilder();
 							embed.setAuthor({ name: user.username, iconURL: user.avatarURL() });
 							embed.setDescription(newDescription);
-							/*if (message.attachments && message.attachments.size > 0) {
-								var files = [];
+							var newFiles = [];
+							if (message.attachments && message.attachments.size > 0) {
 								for (var entry of message.attachments.entries()) {
 									var attachment = entry[1];
-									files.push(attachment.attachment);
+									newFiles.push(attachment.url);
 								}
-								embed.attachFiles(files);
-							}*/ 
-							pinboardChannel.send({ embeds: [embed] });
+							}
+							pinboardChannel.send({ embeds: [embed], files: newFiles });
 							var notificationEmbed = new EmbedBuilder();
 							notificationEmbed.setColor("#C27C0E");
 							notificationEmbed.setDescription(utility.encapsulateIdIntoMention(pinner.id, true) + " done pinned [a dang ole message](" +
