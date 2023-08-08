@@ -1,3 +1,4 @@
+
 # The DGHD Quarantine Sheriff!
 Leave everything to the big man sheriff. Mo mo knows how to protect and how to serve, and have a li'l fun in between.
 
@@ -70,6 +71,18 @@ If one directly mentions the sheriff and includes a statement the sheriff unders
 The accusation mention has specific behavior that requires a more in depth description.
 
 This is used in tandem with the `arrest` command. After a user has been put under arrest, the accuser, and *only* the accuser can then mention the sheriff and add an offense. The sheriff, if the offense is valid, will proceed to put the user in jail for the entirety of their sentence. If a user is further incarcerated for any offense that holds a longer sentence, that user's current sentence will be extended to the longer one.
+
+The offenses and their sentences are as follows:
+
+ - Butt Dialing (1 minute)
+ - Chattermouthing (2 minutes)
+ - Lack of Expressed Written Consent from the NFL (4 minutes)
+ - Lollygagging (1 minute)
+ - Not Drinking at Work (3 minutes)
+ - Obstruction of Highway Passageway (4 minutes)
+ - Out Past Curfew (2 minutes)
+ - Streaking (2 minutes)
+ - Voter Fraud (4 minutes)
 
 ## Timed Events
 A number of events take place on a regular timer during the lifetime of the sheriff's active duty.
