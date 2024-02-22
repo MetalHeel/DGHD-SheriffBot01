@@ -5,7 +5,7 @@
   "main": "dghdSheriffBot.js",
   "dependencies": {
     "@xmldom/xmldom": "^0.8.2",
-    "axios": "^0.27.2",
+    "axios": "^0.28.0",
     "bl": "^4.1.0",
     "debug": "^4.3.4",
     "discord.js": "^14.3.0",
