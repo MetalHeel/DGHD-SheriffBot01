@@ -40,6 +40,7 @@ var config = {
 	password: 'password',
 	server: 'localhost', 
 	database: 'DGHD-Sheriff',
+	trustServerCertificate: true,
 	options: {
 		enableArithAbort: true
 	}

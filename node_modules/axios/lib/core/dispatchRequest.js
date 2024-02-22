@@ -5,6 +5,7 @@ var transformData = require('./transformData');
 var isCancel = require('../cancel/isCancel');
 var defaults = require('../defaults');
 var CanceledError = require('../cancel/CanceledError');
+var normalizeHeaderName = require('../helpers/normalizeHeaderName');
 
 /**
  * Throws a `CanceledError` if cancellation has been requested.
@@ -36,8 +37,12 @@ module.exports = function dispatchRequest(config) {
     config,
     config.data,
     config.headers,
+    null,
     config.transformRequest
   );
+
+  normalizeHeaderName(config.headers, 'Accept');
+  normalizeHeaderName(config.headers, 'Content-Type');
 
   // Flatten headers
   config.headers = utils.merge(
@@ -63,6 +68,7 @@ module.exports = function dispatchRequest(config) {
       config,
       response.data,
       response.headers,
+      response.status,
       config.transformResponse
     );
 
@@ -77,6 +83,7 @@ module.exports = function dispatchRequest(config) {
           config,
           reason.response.data,
           reason.response.headers,
+          reason.response.status,
           config.transformResponse
         );
       }
