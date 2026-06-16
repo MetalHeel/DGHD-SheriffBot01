@@ -64,7 +64,7 @@ sql.connect(config, function (err) {
 	}
 });
 
-client.on('ready', () => {
+client.on('clientReady', () => {
 	Sheriff.theSheriff.userId = client.user.id;
 	Sheriff.theSheriff.lastCheckAroundTheBeat = new Date().getTime();
 	Sheriff.theSheriff.timeUntilNextBeatCheck = utility.getRandomNumberBetweenXAndY(Sheriff.theSheriff.timeUntilNextBeatCheckLowerLimit, Sheriff.theSheriff.timeUntilNextBeatCheckHigherLimit);

@@ -6,6 +6,7 @@ var isCancel = require('../cancel/isCancel');
 var defaults = require('../defaults');
 var CanceledError = require('../cancel/CanceledError');
 var normalizeHeaderName = require('../helpers/normalizeHeaderName');
+var sanitizeHeaderValue = require('../helpers/sanitizeHeaderValue');
 
 /**
  * Throws a `CanceledError` if cancellation has been requested.
@@ -45,11 +46,16 @@ module.exports = function dispatchRequest(config) {
   normalizeHeaderName(config.headers, 'Content-Type');
 
   // Flatten headers
-  config.headers = utils.merge(
-    config.headers.common || {},
-    config.headers[config.method] || {},
-    config.headers
-  );
+  var commonHeaders = utils.hasOwnProperty(config.headers, 'common') && config.headers.common
+    ? config.headers.common
+    : {};
+  var methodHeaders = config.method &&
+    utils.hasOwnProperty(config.headers, config.method) &&
+    config.headers[config.method]
+    ? config.headers[config.method]
+    : {};
+
+  config.headers = utils.merge(commonHeaders, methodHeaders, config.headers);
 
   utils.forEach(
     ['delete', 'get', 'head', 'post', 'put', 'patch', 'common'],
@@ -57,6 +63,10 @@ module.exports = function dispatchRequest(config) {
       delete config.headers[method];
     }
   );
+
+  utils.forEach(config.headers, function sanitizeHeaderConfigValue(value, header) {
+    config.headers[header] = sanitizeHeaderValue(value);
+  });
 
   var adapter = config.adapter || defaults.adapter;
 
